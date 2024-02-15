@@ -1,4 +1,4 @@
-#let rule(name: "", ccl, ..prem) = (name: name, ccl: ccl, prem: prem.pos())
+#let rule(name: none, ccl, ..prem) = (name: name, ccl: ccl, prem: prem.pos())
 
 #let proof-tree(
   rule,
@@ -77,13 +77,13 @@
       }, align(left + horizon, box(
         // stroke: red + 0.3pt, // DEBUG
         inset: (bottom: {
-          if (name == "") { 0.2em } else { 0.05em }
+          if (name == none) { 0.2em } else { 0.05em }
         }),
         stack(
           dir: ltr,
           h(left-blank * 1pt),
           line(start: (0pt, 2pt), length: line-size * 1pt, stroke: stroke),
-          if (name != "") { h(title-inset) },
+          if (name != none) { h(title-inset) },
           name,
         ),
       )), align(left, stack(dir: ltr, h(left-blank * 1pt), block(
