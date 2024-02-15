@@ -19,7 +19,7 @@
     })
     let prem-content = prem.map(p => p.content)
 
-    let number_prem = prem.len()
+    let number-prem = prem.len()
     let top = stack(dir: ltr, ..prem-content)
     let name = rule.name
     let ccl = box(inset: (x: title-inset), rule.ccl)
@@ -29,23 +29,23 @@
     let total-size = calc.max(top-size, ccl-size)
     let name-size = measure(name, styles).width.pt()
 
-    let complete_size = total-size * 1pt + name-size * 1pt + title-inset
+    let complete-size = total-size * 1pt + name-size * 1pt + title-inset
 
     let left-blank = 0
     let right-blank = 0
-    if number_prem >= 1 {
+    if number-prem >= 1 {
       left-blank = prem.at(0).left-blank
-      right-blank = prem.at(number_prem - 1).right-blank
+      right-blank = prem.at(number-prem - 1).right-blank
     }
-    let prem_spacing = 0pt
-    if number_prem >= 1 {
+    let prem-spacing = 0pt
+    if number-prem >= 1 {
       // Same spacing between all premisses
-      prem_spacing = calc.max(prem-min-spacing, (total-size - top-size) / (number_prem + 1) * 1pt)
+      prem-spacing = calc.max(prem-min-spacing, (total-size - top-size) / (number-prem + 1) * 1pt)
     }
-    let top = stack(dir: ltr, spacing: prem_spacing, ..prem-content)
+    let top = stack(dir: ltr, spacing: prem-spacing, ..prem-content)
     top-size = measure(top, styles).width.pt()
     total-size = calc.max(top-size, ccl-size)
-    complete_size = total-size * 1pt + name-size * 1pt + title-inset
+    complete-size = total-size * 1pt + name-size * 1pt + title-inset
 
     if ccl-size > total-size - left-blank - right-blank {
       let d = (total-size - left-blank - right-blank - ccl-size) / 2
@@ -55,18 +55,18 @@
     let line-size = calc.max(total-size - left-blank - right-blank, ccl-size)
     let blank-size = (line-size - ccl-size) / 2
 
-    let top_height = measure(top, styles).height.pt()
-    let ccl_height = measure(ccl, styles).height.pt()
+    let top-height = measure(top, styles).height.pt()
+    let ccl-height = measure(ccl, styles).height.pt()
 
     let content = block(
       // stroke: red + 0.3pt, // DEBUG
-      width: complete_size,
+      width: complete-size,
       stack(spacing: horizontal-spacing, {
         let alignment = left
         // Maybe a fix for having center premisses with big trees
         // let alignment = center
         // If there are only one premisses
-        // if top_height <= 1.5 * ccl_height {
+        // if top-height <= 1.5 * ccl-height {
         //  alignment = left
         // }
         align(alignment, block(
