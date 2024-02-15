@@ -6,10 +6,10 @@
 
 
 #let r = rule(
-  name: "Rule name", 
-  "Conclusion", 
-  "Premise 1", 
-  "Premise 2", 
+  name: "Rule name",
+  "Conclusion",
+  "Premise 1",
+  "Premise 2",
   "Premise 3"
   )
 #proof-tree(r)
@@ -132,10 +132,10 @@ $
 )
 
 #let r = rule(
-  name: "Rule name Rule name Rule name", 
-  "Conclusion", 
-  "Premise 1", 
-  "Premise 2", 
+  name: "Rule name Rule name Rule name",
+  "Conclusion",
+  "Premise 1",
+  "Premise 2",
   "Premise 3"
   )
 #proof-tree(r)
@@ -143,8 +143,8 @@ $
 = Differente Stroke
 
 #let r = rule(
-  name: "Rule name", 
-  "Conclusion", 
+  name: "Rule name",
+  "Conclusion",
   "Premise 1",
   "Premise 2",
   "Premise 3"

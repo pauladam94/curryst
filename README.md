@@ -1,6 +1,6 @@
 # Curryst
 
-A Typst package for typesetting proof trees. You can import this package with :
+A Typst package for typesetting proof trees. You can import this package with:
 
 ```typst
 #import "@preview/curryst:0.1.1"
@@ -12,10 +12,10 @@ Here is a basic usage example:
 
 ```typst
 #let r = curryst.rule(
-  name: "Rule name", 
-  "Conclusion", 
-  "Premise 1", 
-  "Premise 2", 
+  name: "Rule name",
+  "Conclusion",
+  "Premise 1",
+  "Premise 2",
   "Premise 3"
   )
 #curryst.proof-tree(r)
@@ -25,7 +25,7 @@ Result:
 
 ![basic_example](examples/basic_example.png)
 
-Here is a more complete example, to typeset a proof tree in [natural deduction](https://en.wikipedia.org/wiki/Natural_deduction). First, define the set of rules :
+Here is a more complete example, to typeset a proof tree in [natural deduction](https://en.wikipedia.org/wiki/Natural_deduction). First, define the set of rules:
 
 ```typst
 #let ax(ccl) = curryst.rule(name: "ax", ccl)
