@@ -8,7 +8,7 @@
   horizontal-spacing: 0pt,
 ) = {
   let aux(styles, rule) = {
-    let prem = rule.at("prem").map(r => if type(r) == "dictionary" {
+    let prem = rule.at("prem").map(r => if type(r) == dictionary {
       aux(styles, r)
     } else {
       (
