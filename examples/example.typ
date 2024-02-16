@@ -53,20 +53,20 @@ $
 #proof-tree(rule(
   name : "Rule",
   $Gamma$,
-  $"Premisse" 1$
+  $"Premise" 1$
 ))
 $
 
 #proof-tree(rule(
   name : "Rule",
   $Gamma$,
-  $"Premisse Premisse Premisse Premisse"$
+  $"Premise Premise Premise Premise"$
 ))
 
 #proof-tree(rule(
   name : "Rule",
   $"Conclusion Conclusion Conclusion Conclusion Conclusion"$,
-  $"Premisse"$
+  $"Premise"$
 ))
 
 
@@ -75,24 +75,24 @@ $
 #proof-tree(rule(
   name : "Rule",
   $Gamma a / b$,
-  $"Premisse " a / b / c$
+  $"Premise " a / b / c$
 ))
 
 = Example 5 : without names
 
 #proof-tree(rule(
   $Gamma a $,
-  $"Premisse " a$
+  $"Premise " a$
 ))
 
 #proof-tree(rule(
   $Gamma$,
-  $"Premisse Premisse Premisse Premisse"$
+  $"Premise Premise Premise Premise"$
 ))
 
 #proof-tree(rule(
   $"Conclusion Conclusion Conclusion Conclusion Conclusion"$,
-  $"Premisse"$
+  $"Premise"$
 ))
 
 = Example 6 : long names
