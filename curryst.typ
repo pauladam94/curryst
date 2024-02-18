@@ -36,9 +36,17 @@
   /// horizontal line and the rule name (if any).
   horizontal-spacing: 0pt,
 ) = {
-  let aux(styles, rule) = {
-    let prem = rule.at("prem").map(r => if type(r) == dictionary {
-      aux(styles, r)
+  /// Returns a dictionary containing a laid out tree, as well as additional
+  /// information.
+  ///
+  /// - `content` is the laid out tree.
+  /// - `left-blank` is the offset of the start of the trunc of the tree, from
+  ///   the left of the bounding box of the returned content.
+  /// - `right-blank` is the offset of the end of the trunc of the tree, from
+  ///   the right of the bounding box of the returned content.
+  let layout(styles, rule) = {
+    let prem = rule.prem.map(r => if type(r) == dictionary {
+      layout(styles, r)
     } else {
       (
         left-blank: 0,
@@ -64,7 +72,7 @@
     let right-blank = 0
     if number-prem >= 1 {
       left-blank = prem.at(0).left-blank
-      right-blank = prem.at(number-prem - 1).right-blank
+      right-blank = prem.at(-1).right-blank
     }
     let prem-spacing = 0pt
     if number-prem >= 1 {
@@ -130,7 +138,7 @@
   style(styles => {
     box(
       // stroke : black + 0.3pt, // DEBUG
-      aux(styles, rule).content,
+      layout(styles, rule).content,
     )
   })
 }
