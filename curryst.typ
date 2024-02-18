@@ -98,43 +98,67 @@
     let content = block(
       // stroke: red + 0.3pt, // DEBUG
       width: complete-size,
-      stack(spacing: horizontal-spacing, {
-        let alignment = left
-        // Maybe a fix for having center premisses with big trees
-        // let alignment = center
-        // If there are only one premisses
-        // if top-height <= 1.5 * ccl-height {
-        //  alignment = left
-        // }
-        align(alignment, block(
-          // stroke: green + 0.3pt, // DEBUG
-          width: total-size * 1pt,
-          align(center + bottom, top),
-        ))
-      }, align(left + horizon, box(
-        // stroke: red + 0.3pt, // DEBUG
-        inset: (bottom: {
-          if (name == none) { 0.2em } else { 0.05em }
-        }),
-        stack(
-          dir: ltr,
-          h(left-blank * 1pt),
-          line(start: (0pt, 2pt), length: line-size * 1pt, stroke: stroke),
-          if (name != none) { h(title-inset) },
-          name,
-        ),
-      )), align(left, stack(dir: ltr, h(left-blank * 1pt), block(
-        // stroke: blue + 0.3pt, // DEBUG
-        width: line-size * 1pt,
-        align(center, ccl),
-      )))),
+      stack(
+        spacing: horizontal-spacing,
+
+        // Lay out top.
+        {
+          let alignment = left
+          // Maybe a fix for having center premisses with big trees
+          // let alignment = center
+          // If there are only one premisses
+          // if top-height <= 1.5 * ccl-height {
+          //  alignment = left
+          // }
+          set align(alignment)
+          block(
+            // stroke: green + 0.3pt, // DEBUG
+            width: total-size * 1pt,
+            align(center + bottom, top),
+          )
+        },
+
+        // Lay out bar.
+        {
+          set align(left + horizon)
+          box(
+            // stroke: red + 0.3pt, // DEBUG
+            inset: (bottom: {
+              if (name == none) { 0.2em } else { 0.05em }
+            }),
+            stack(
+              dir: ltr,
+              h(left-blank * 1pt),
+              line(start: (0pt, 2pt), length: line-size * 1pt, stroke: stroke),
+              if (name != none) { h(title-inset) },
+              name,
+            ),
+          )
+        },
+
+        // Lay out conclusion.
+        {
+          set align(left)
+          stack(
+            dir: ltr,
+            h(left-blank * 1pt),
+            block(
+              // stroke: blue + 0.3pt, // DEBUG
+              width: line-size * 1pt,
+              align(center, ccl),
+            )
+          )
+        },
+      ),
     )
+
     return (
       left-blank: blank-size + left-blank,
       right-blank: blank-size + right-blank,
       content: content,
     )
   }
+
   style(styles => {
     box(
       // stroke : black + 0.3pt, // DEBUG
