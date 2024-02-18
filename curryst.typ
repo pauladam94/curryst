@@ -1,10 +1,39 @@
-#let rule(name: none, ccl, ..prem) = (name: name, ccl: ccl, prem: prem.pos())
+/// Creates an inference rule.
+///
+/// You can render a rule created with this function using the `proof-tree`
+/// function.
+#let rule(
+  /// The name of the rule, displayed on the right of the horizontal bar.
+  name: none,
+  /// The conclusion of the rule.
+  conclusion,
+  /// The premises of the rule. Might be other rules constructed with this
+  /// function, or some content.
+  ..premises
+) = (
+  name: name,
+  ccl: conclusion,
+  prem: premises.pos()
+)
 
+/// Lays out a proof tree.
 #let proof-tree(
+  /// The rule to lay out.
+  ///
+  /// Such a rule can be constructed using the `rule` function.
   rule,
+  /// The minimum amount of space between two premises.
   prem-min-spacing: 15pt,
+  /// The amount width with which to extend the horizontal bar beyond the
+  /// content. Also determines how far from the bar the rule name is displayed.
   title-inset: 2pt,
-  stroke: 0.4pt,
+  /// The stroke to use for the horizontal bars.
+  stroke: stroke(0.4pt),
+  /// The space between the bottom of the bar and the conclusion, and between
+  /// the top of the bar and the premises.
+  ///
+  /// Note that, in this case, "the bar" refers to the bounding box of the
+  /// horizontal line and the rule name (if any).
   horizontal-spacing: 0pt,
 ) = {
   let aux(styles, rule) = {
