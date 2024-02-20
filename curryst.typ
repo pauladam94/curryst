@@ -35,6 +35,15 @@
   /// Note that, in this case, "the bar" refers to the bounding box of the
   /// horizontal line and the rule name (if any).
   horizontal-spacing: 0pt,
+  /// The height of the box containing the horizontal bar.
+  ///
+  /// The height of this box is normally determined by the height of the rule
+  /// name because this is the highest element of the box. This setting lets you
+  /// set this minimum height. The default is 0.7em, which is barely higher than
+  /// a single line of content, meaning all parts of the tree will align
+  /// properly by default, even if some rules have no name (unless a rule is
+  /// higher than a single line).
+  min-bar-height: 0.7em,
 ) = {
   /// Returns a dictionary containing a laid out tree, as well as additional
   /// information.
@@ -45,6 +54,10 @@
   /// - `right-blank` is the offset of the end of the trunc of the tree, from
   ///   the right of the bounding box of the returned content.
   let layout(styles, rule) = {
+    // There is no alternative until the next Typst version.
+    // See: https://github.com/typst/typst/pull/3117.
+    min-bar-height = measure(line(length: min-bar-height), styles).width
+
     let prem = rule.prem.map(r => if type(r) == dictionary {
       layout(styles, r)
     } else {
@@ -64,9 +77,9 @@
     let top-size = measure(top, styles).width
     let ccl-size = measure(ccl, styles).width
     let total-size = calc.max(top-size, ccl-size)
-    let name-size = measure(name, styles).width
+    let (width: name-width, height: name-height) = measure(name, styles)
 
-    let complete-size = total-size + name-size + title-inset
+    let complete-size = total-size + name-width + title-inset
 
     let left-blank = 0pt
     let right-blank = 0pt
@@ -82,7 +95,7 @@
     let top = stack(dir: ltr, spacing: prem-spacing, ..prem-content)
     top-size = measure(top, styles).width
     total-size = calc.max(top-size, ccl-size)
-    complete-size = total-size + name-size + title-inset
+    complete-size = total-size + name-width + title-inset
 
     if ccl-size > total-size - left-blank - right-blank {
       let d = (total-size - left-blank - right-blank - ccl-size) / 2
@@ -123,6 +136,7 @@
           set align(left + horizon)
           box(
             // stroke: red + 0.3pt, // DEBUG
+            height: calc.max(name-height, min-bar-height),
             inset: (bottom: {
               if (name == none) { 0.2em } else { 0.05em }
             }),
