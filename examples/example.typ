@@ -169,3 +169,21 @@ $
   stroke : stroke(cap :"round", dash : "dashed", paint : blue),
   r
 )
+
+
+= Example 8: rules with and without name are aligned
+
+#proof-tree(
+  rule(
+    [Conclusion],
+    rule(
+      [Premise],
+      [Hypothesis],
+    ),
+    rule(
+      name: [Name],
+      [Premise],
+      [Hypothesis],
+    ),
+  )
+)
