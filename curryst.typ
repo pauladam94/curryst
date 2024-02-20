@@ -38,8 +38,8 @@
   /// The height of the box containing the horizontal bar.
   ///
   /// The height of this box is normally determined by the height of the rule
-  /// name because this is the highest element of the box. This setting lets you
-  /// set this minimum height. The default is 0.7em, which is barely higher than
+  /// name because it is the biggest element of the box. This setting lets you
+  /// set a minimum height. The default is 0.7em, which is barely higher than
   /// a single line of content, meaning all parts of the tree will align
   /// properly by default, even if some rules have no name (unless a rule is
   /// higher than a single line).
