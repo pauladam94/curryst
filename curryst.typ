@@ -56,7 +56,7 @@
   let layout(styles, rule) = {
     // There is no alternative until the next Typst version.
     // See: https://github.com/typst/typst/pull/3117.
-    min-bar-height = measure(line(length: min-bar-height), styles).width
+    let min-bar-height = measure(line(length: min-bar-height), styles).width
 
     let prem = rule.prem.map(r => if type(r) == dictionary {
       layout(styles, r)
