@@ -54,19 +54,19 @@
   /// - `right-blank` is the offset of the end of the trunc of the tree, from
   ///   the right of the bounding box of the returned content.
   let layout(styles, rule) = {
+    if type(rule) != dictionary {
+      return (
+        left-blank: 0pt,
+        right-blank: 0pt,
+        content: box(rule),
+      )
+    }
+
     // There is no alternative until the next Typst version.
     // See: https://github.com/typst/typst/pull/3117.
     let min-bar-height = measure(line(length: min-bar-height), styles).width
 
-    let prem = rule.prem.map(r => if type(r) == dictionary {
-      layout(styles, r)
-    } else {
-      (
-        left-blank: 0pt,
-        right-blank: 0pt,
-        content: box(inset: (x: title-inset), r),
-      )
-    })
+    let prem = rule.prem.map(p => layout(styles, p))
     let prem-content = prem.map(p => p.content)
 
     let number-prem = prem.len()
