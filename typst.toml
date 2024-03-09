@@ -7,4 +7,4 @@ license = "MIT"
 description = "Typesetting of trees of inference rules in Typst."
 exclude = ["examples", "*.pdf"]
 keywords = ["inference rules", "logic", "prooftree"]
-compiler = "0.10.0"
+compiler = "0.11.0"
