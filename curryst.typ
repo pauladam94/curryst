@@ -48,17 +48,20 @@
   import "internals.typ": layout-tree
 
   context {
+    let tree = layout-tree(
+      rule,
+      prem-min-spacing.to-absolute(),
+      stroke,
+      title-inset.to-absolute(),
+      title-inset.to-absolute(),
+      horizontal-spacing.to-absolute(),
+      min-bar-height.to-absolute(),
+    ).content
+
     block(
       // stroke : black + 0.3pt, // DEBUG
-      layout-tree(
-        rule,
-        prem-min-spacing.to-absolute(),
-        stroke,
-        title-inset.to-absolute(),
-        title-inset.to-absolute(),
-        horizontal-spacing.to-absolute(),
-        min-bar-height.to-absolute(),
-      ).content,
+      ..measure(tree),
+      tree,
     )
   }
 }
