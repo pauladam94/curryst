@@ -2,7 +2,7 @@
 name = "curryst"
 version = "0.1.1"
 entrypoint = "curryst.typ"
-authors = ["Rémi Hutin <https://github.com/remih23>", "Paul Adam <https://github.com/pauladam94>"]
+authors = ["Rémi Hutin <@remih23>", "Paul Adam <@pauladam94>"]
 license = "MIT"
 description = "Typesetting of trees of inference rules in Typst."
 exclude = ["examples", "*.pdf"]
