@@ -1,77 +1,146 @@
 # Curryst
 
-A Typst package for typesetting proof trees. You can import this package with:
+A Typst package for typesetting proof trees.
+
+
+## Import
+
+You can import the latest version of this package with:
 
 ```typst
-#import "@preview/curryst:0.1.1"
+#import "@preview/curryst:0.1.1": rule, proof-tree
 ```
 
-## Examples
 
-Here is a basic usage example:
+## Basic usage
 
-```typst
-#let r = curryst.rule(
-  name: "Rule name",
-  "Conclusion",
-  "Premise 1",
-  "Premise 2",
-  "Premise 3"
-  )
-#curryst.proof-tree(r)
+To display a proof tree, you first need to create a tree, using the `rule` function. Its first argument is the conclusion, and the other positional arguments are the premises. It also accepts a `name` for the rule name.
+
+```typ
+#let tree = rule(
+  name: [Rule name],
+  [Conclusion],
+  [Premise 1],
+  [Premise 2],
+  [Premise 3]
+)
 ```
 
-Result:
+Then, you can display the tree with the `proof-tree` function:
 
-![basic_example](examples/basic_example.png)
-
-Here is a more complete example, to typeset a proof tree in [natural deduction](https://en.wikipedia.org/wiki/Natural_deduction). First, define the set of rules:
-
-```typst
-#let ax(ccl) = curryst.rule(name: "ax", ccl)
-#let and_i(ccl, p1, p2) = curryst.rule(name: $and_i$, ccl, p1, p2)
-
-
-#let and_el(ccl, p) = curryst.rule(name: $and_e^l$, ccl, p)
-#let and_er(ccl, p) = curryst.rule(name: $and_e^r$, ccl, p)
-#let or_il(ccl, p1) = curryst.rule(name: $or_i^l$, ccl, p1)
-#let or_ir(ccl, p2) = curryst.rule(name: $or_i^r$, ccl, p2)
-#let or_e(ccl, por, p1, p2) = curryst.rule(name: $or_e$, ccl, por, p1, p2)
-#let impl_i(ccl, p) = curryst.rule(name: $attach(->, br: i)$, ccl, p)
-#let impl_e(ccl, pi, p1) = curryst.rule(name: $attach(->, br: e)$, ccl, pi, p1)
-#let not_i(ccl, p) = curryst.rule(name: $not_i$, ccl, p)
-#let not_e(ccl, pf, pt) = curryst.rule(name: $not_e$, ccl, pf, pt)
-#let absurd(ccl, p) = curryst.rule(name: $bot$, ccl, p)
+```typ
+#proof-tree(tree)
 ```
 
-Next, combine these rules to build a proof tree:
+In this case, we get the following result:
 
-```typst
-#curryst.proof-tree(
-  impl_i(
-    $tack (p -> q) -> not (p and not q)$,
-    not_i(
-      $p -> q tack  not (p and not q)$,
-      not_e(
-        $p -> q, p and not q tack bot$,
-        impl_e(
-          $Gamma tack q$,
-          ax($Gamma tack p -> q$),
-          and_el(
-            $Gamma tack p$,
-            ax($Gamma tack p and not q$)
-          )
-        ),
-        and_er(
-          $Gamma tack not q$,
-          ax($Gamma tack p and not q$)
-        )
-      )
+![A proof tree with three premises, a conclusion, and a rule name.](examples/usage.png)
+
+Proof trees can be part of mathematical formulas:
+
+```typ
+Consider the following tree:
+$
+  Pi quad = quad #proof-tree(
+    rule(
+      $phi$,
+      $Pi_1$,
+      $Pi_2$,
     )
+  )
+$
+$Pi$ constitutes a derivation of $phi$.s
+```
+
+![The rendered document.](examples/math-formula.png)
+
+You can specify a rule as the premises of a rule in order to create a tree:
+
+```typ
+#proof-tree(
+  rule(
+    name: $R$,
+    $C_1 or C_2 or C_3$,
+    rule(
+      name: $A$,
+      $C_1 or C_2 or L$,
+      rule(
+        $C_1 or L$,
+        $Pi_1$,
+      ),
+    ),
+    rule(
+      $C_2 or overline(L)$,
+      $Pi_2$,
+    ),
   )
 )
 ```
 
-Result:
+![The rendered tree.](examples/rule-as-premise.png)
 
-![wikipedia_example](examples/wikipedia_example.png)
+As an example, here is a natural deduction proof tree generated with Curryst:
+
+![The rendered tree.](examples/natural-deduction.png)
+
+<details>
+  <summary>Show code</summary>
+
+  ```typ
+  #let ax = rule.with(name: [ax])
+  #let and-el = rule.with(name: $and_e^ell$)
+  #let and-er = rule.with(name: $and_e^r$)
+  #let impl-i = rule.with(name: $scripts(->)_i$)
+  #let impl-e = rule.with(name: $scripts(->)_e$)
+  #let not-i = rule.with(name: $not_i$)
+  #let not-e = rule.with(name: $not_e$)
+
+  #proof-tree(
+    impl-i(
+      $tack (p -> q) -> not (p and not q)$,
+      not-i(
+        $p -> q tack  not (p and not q)$,
+        not-e(
+          $ underbrace(p -> q\, p and not q, Gamma) tack bot $,
+          impl-e(
+            $Gamma tack q$,
+            ax($Gamma tack p -> q$),
+            and-el(
+              $Gamma tack p$,
+              ax($Gamma tack p and not q$),
+            ),
+          ),
+          and-er(
+            $Gamma tack not q$,
+            ax($Gamma tack p and not q$),
+          ),
+        ),
+      ),
+    )
+  )
+  ```
+</details>
+
+
+## Advanced usage
+
+The `proof-tree` function accepts multiple named arguments that let you customize the tree:
+
+<dl>
+  <dt><code>prem-min-spacing</code></dt>
+  <dd>The minimum amount of space between two premises.</dd>
+
+  <dt><code>title-inset</code></dt>
+  <dd>The amount width with which to extend the horizontal bar beyond the content. Also determines how far from the bar the rule name is displayed.</dd>
+
+  <dt><code>stroke</code></dt>
+  <dd>The stroke to use for the horizontal bars.</dd>
+
+  <dt><code>horizontal-spacing</code></dt>
+  <dd>The space between the bottom of the bar and the conclusion, and between the top of the bar and the premises.</dd>
+
+  <dt><code>min-bar-height</code></dt>
+  <dd>The minimum height of the box containing the horizontal bar.</dd>
+</dl>
+
+For more information, please refer to the documentation in [`curryst.typ`](curryst.typ).
