@@ -12,8 +12,8 @@
   ..premises
 ) = (
   name: name,
-  ccl: conclusion,
-  prem: premises.pos()
+  conclusion: conclusion,
+  premises: premises.pos()
 )
 
 /// Lays out a proof tree.
@@ -35,148 +35,30 @@
   /// Note that, in this case, "the bar" refers to the bounding box of the
   /// horizontal line and the rule name (if any).
   horizontal-spacing: 0pt,
-  /// The height of the box containing the horizontal bar.
+  /// The minimum height of the box containing the horizontal bar.
   ///
   /// The height of this box is normally determined by the height of the rule
   /// name because it is the biggest element of the box. This setting lets you
-  /// set a minimum height. The default is 0.7em, which is barely higher than
-  /// a single line of content, meaning all parts of the tree will align
-  /// properly by default, even if some rules have no name (unless a rule is
-  /// higher than a single line).
-  min-bar-height: 0.7em,
+  /// set a minimum height. The default is 0.8em, is higher than a single line
+  /// of content, meaning all parts of the tree will align properly by default,
+  /// even if some rules have no name (unless a rule is higher than a single
+  /// line).
+  min-bar-height: 0.8em,
 ) = {
-  /// Returns a dictionary containing a laid out tree, as well as additional
-  /// information.
-  ///
-  /// - `content` is the laid out tree.
-  /// - `left-blank` is the offset of the start of the trunc of the tree, from
-  ///   the left of the bounding box of the returned content.
-  /// - `right-blank` is the offset of the end of the trunc of the tree, from
-  ///   the right of the bounding box of the returned content.
-  let layout(styles, rule) = {
-    if type(rule) != dictionary {
-      return (
-        left-blank: 0pt,
-        right-blank: 0pt,
-        content: box(rule),
-      )
-    }
+  import "internals.typ": layout-tree
 
-    // There is no alternative until the next Typst version.
-    // See: https://github.com/typst/typst/pull/3117.
-    let min-bar-height = measure(line(length: min-bar-height), styles).width
-
-    let prem = rule.prem.map(p => layout(styles, p))
-    let prem-content = prem.map(p => p.content)
-
-    let number-prem = prem.len()
-    let top = stack(dir: ltr, ..prem-content)
-    let name = rule.name
-    let ccl = box(inset: (x: title-inset), rule.ccl)
-
-    let top-size = measure(top, styles).width
-    let ccl-size = measure(ccl, styles).width
-    let total-size = calc.max(top-size, ccl-size)
-    let (width: name-width, height: name-height) = measure(name, styles)
-
-    let complete-size = total-size + name-width + title-inset
-
-    let left-blank = 0pt
-    let right-blank = 0pt
-    if number-prem >= 1 {
-      left-blank = prem.at(0).left-blank
-      right-blank = prem.at(-1).right-blank
-    }
-    let prem-spacing = 0pt
-    if number-prem >= 1 {
-      // Same spacing between all premisses
-      prem-spacing = calc.max(prem-min-spacing, (total-size - top-size) / (number-prem + 1))
-    }
-    let top = stack(dir: ltr, spacing: prem-spacing, ..prem-content)
-    top-size = measure(top, styles).width
-    total-size = calc.max(top-size, ccl-size)
-    complete-size = total-size + name-width + title-inset
-
-    if ccl-size > total-size - left-blank - right-blank {
-      let d = (total-size - left-blank - right-blank - ccl-size) / 2
-      left-blank += d
-      right-blank += d
-    }
-    let line-size = calc.max(total-size - left-blank - right-blank, ccl-size)
-    let blank-size = (line-size - ccl-size) / 2
-
-    let top-height = measure(top, styles).height
-    let ccl-height = measure(ccl, styles).height
-
-    let content = block(
-      // stroke: red + 0.3pt, // DEBUG
-      width: complete-size,
-      stack(
-        spacing: horizontal-spacing,
-
-        // Lay out top.
-        {
-          let alignment = left
-          // Maybe a fix for having center premisses with big trees
-          // let alignment = center
-          // If there are only one premisses
-          // if top-height <= 1.5 * ccl-height {
-          //  alignment = left
-          // }
-          set align(alignment)
-          block(
-            // stroke: green + 0.3pt, // DEBUG
-            width: total-size,
-            align(center + bottom, top),
-          )
-        },
-
-        // Lay out bar.
-        {
-          set align(left + horizon)
-          box(
-            // stroke: red + 0.3pt, // DEBUG
-            height: calc.max(name-height, min-bar-height),
-            inset: (bottom: {
-              if (name == none) { 0.2em } else { 0.05em }
-            }),
-            stack(
-              dir: ltr,
-              h(left-blank),
-              line(start: (0pt, 2pt), length: line-size, stroke: stroke),
-              if (name != none) { h(title-inset) },
-              name,
-            ),
-          )
-        },
-
-        // Lay out conclusion.
-        {
-          set align(left)
-          stack(
-            dir: ltr,
-            h(left-blank),
-            block(
-              // stroke: blue + 0.3pt, // DEBUG
-              width: line-size,
-              align(center, ccl),
-            )
-          )
-        },
-      ),
-    )
-
-    return (
-      left-blank: blank-size + left-blank,
-      right-blank: blank-size + right-blank,
-      content: content,
+  context {
+    block(
+      // stroke : black + 0.3pt, // DEBUG
+      layout-tree(
+        rule,
+        prem-min-spacing.to-absolute(),
+        stroke,
+        title-inset.to-absolute(),
+        title-inset.to-absolute(),
+        horizontal-spacing.to-absolute(),
+        min-bar-height.to-absolute(),
+      ).content,
     )
   }
-
-  style(styles => {
-    box(
-      // stroke : black + 0.3pt, // DEBUG
-      layout(styles, rule).content,
-    )
-  })
 }
