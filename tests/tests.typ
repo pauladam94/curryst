@@ -91,7 +91,7 @@
 )
 
 
-#let ax(ccl) = rule(name: "ax", ccl)
+#let ax(ccl) = rule(name: [ax], ccl)
 #let and-el(ccl, p) = rule(name: $and_e^l$, ccl, p)
 #let and-er(ccl, p) = rule(name: $and_e^r$, ccl, p)
 #let impl-i(ccl, p) = rule(name: $attach(->, br: i)$, ccl, p)
@@ -174,7 +174,7 @@
 #let not-e(ccl, pf, pt) = rule(name: "aaaaaaaa", ccl, pf, pt)
 
 #test(
-  prem-min-spacing: 8pt,
+  config: (prem-min-spacing: 8pt),
   [Conclusion],
   impl-i(
     $tack (p -> q) -> not (p and not q)$,

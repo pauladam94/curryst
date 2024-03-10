@@ -10,11 +10,38 @@
   /// The premises of the rule. Might be other rules constructed with this
   /// function, or some content.
   ..premises
-) = (
-  name: name,
-  conclusion: conclusion,
-  premises: premises.pos()
-)
+) = {
+  assert(
+    name == none or type(name) == str or type(name) == content,
+    message: "The name of a rule must be some content.",
+  )
+  assert(
+    type(conclusion) == str or type(conclusion) == content,
+    message: "The conclusion of a rule must be some content. In particular, it cannot be another rule.",
+  )
+  for premise in premises.pos() {
+    assert(
+      type(premise) == str
+        or type(premise) == content
+        or (
+          type(premise) == dictionary
+            and "name" in premise
+            and "conclusion" in premise
+            and "premises" in premise
+        ),
+      message: "A premise must be some content or another rule.",
+    )
+  }
+  assert(
+    premises.named() == (:),
+    message: "Unexpected named arguments to `rule`.",
+  )
+  (
+    name: name,
+    conclusion: conclusion,
+    premises: premises.pos()
+  )
+}
 
 /// Lays out a proof tree.
 #let proof-tree(
