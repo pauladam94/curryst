@@ -5,6 +5,6 @@ entrypoint = "curryst.typ"
 authors = ["Rémi Hutin <@remih23>", "Paul Adam <@pauladam94>", "Malo <@MDLC01>"]
 license = "MIT"
 description = "Typesetting of trees of inference rules in Typst."
-exclude = ["README.md", "examples/*"]
+exclude = ["README.md", "examples/*", "tests/*"]
 keywords = ["inference rules", "logic", "prooftree"]
 compiler = "0.11.0"
