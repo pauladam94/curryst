@@ -10,11 +10,39 @@
   /// The premises of the rule. Might be other rules constructed with this
   /// function, or some content.
   ..premises
-) = (
-  name: name,
-  ccl: conclusion,
-  prem: premises.pos()
-)
+) = {
+  assert(
+    name == none or type(name) == str or type(name) == content or type(name) == symbol,
+    message: "The name of a rule must be some content.",
+  )
+  assert(
+    type(conclusion) == str or type(conclusion) == content or type(conclusion) == symbol,
+    message: "The conclusion of a rule must be some content. In particular, it cannot be another rule.",
+  )
+  for premise in premises.pos() {
+    assert(
+      type(premise) == str
+        or type(premise) == content
+        or type(premise) == symbol
+        or (
+          type(premise) == dictionary
+            and "name" in premise
+            and "conclusion" in premise
+            and "premises" in premise
+        ),
+      message: "A premise must be some content or another rule.",
+    )
+  }
+  assert(
+    premises.named() == (:),
+    message: "Unexpected named arguments to `rule`.",
+  )
+  (
+    name: name,
+    conclusion: conclusion,
+    premises: premises.pos()
+  )
+}
 
 /// Lays out a proof tree.
 #let proof-tree(
@@ -35,148 +63,293 @@
   /// Note that, in this case, "the bar" refers to the bounding box of the
   /// horizontal line and the rule name (if any).
   horizontal-spacing: 0pt,
-  /// The height of the box containing the horizontal bar.
+  /// The minimum height of the box containing the horizontal bar.
   ///
   /// The height of this box is normally determined by the height of the rule
   /// name because it is the biggest element of the box. This setting lets you
-  /// set a minimum height. The default is 0.7em, which is barely higher than
-  /// a single line of content, meaning all parts of the tree will align
-  /// properly by default, even if some rules have no name (unless a rule is
-  /// higher than a single line).
-  min-bar-height: 0.7em,
+  /// set a minimum height. The default is 0.8em, is higher than a single line
+  /// of content, meaning all parts of the tree will align properly by default,
+  /// even if some rules have no name (unless a rule is higher than a single
+  /// line).
+  min-bar-height: 0.8em,
 ) = {
-  /// Returns a dictionary containing a laid out tree, as well as additional
-  /// information.
+  /// Lays out some content.
   ///
-  /// - `content` is the laid out tree.
-  /// - `left-blank` is the offset of the start of the trunc of the tree, from
-  ///   the left of the bounding box of the returned content.
-  /// - `right-blank` is the offset of the end of the trunc of the tree, from
-  ///   the right of the bounding box of the returned content.
-  let layout(styles, rule) = {
-    // There is no alternative until the next Typst version.
-    // See: https://github.com/typst/typst/pull/3117.
-    let min-bar-height = measure(line(length: min-bar-height), styles).width
-
-    let prem = rule.prem.map(r => if type(r) == dictionary {
-      layout(styles, r)
-    } else {
-      (
-        left-blank: 0pt,
-        right-blank: 0pt,
-        content: box(inset: (x: title-inset), r),
-      )
-    })
-    let prem-content = prem.map(p => p.content)
-
-    let number-prem = prem.len()
-    let top = stack(dir: ltr, ..prem-content)
-    let name = rule.name
-    let ccl = box(inset: (x: title-inset), rule.ccl)
-
-    let top-size = measure(top, styles).width
-    let ccl-size = measure(ccl, styles).width
-    let total-size = calc.max(top-size, ccl-size)
-    let (width: name-width, height: name-height) = measure(name, styles)
-
-    let complete-size = total-size + name-width + title-inset
-
-    let left-blank = 0pt
-    let right-blank = 0pt
-    if number-prem >= 1 {
-      left-blank = prem.at(0).left-blank
-      right-blank = prem.at(-1).right-blank
-    }
-    let prem-spacing = 0pt
-    if number-prem >= 1 {
-      // Same spacing between all premisses
-      prem-spacing = calc.max(prem-min-spacing, (total-size - top-size) / (number-prem + 1))
-    }
-    let top = stack(dir: ltr, spacing: prem-spacing, ..prem-content)
-    top-size = measure(top, styles).width
-    total-size = calc.max(top-size, ccl-size)
-    complete-size = total-size + name-width + title-inset
-
-    if ccl-size > total-size - left-blank - right-blank {
-      let d = (total-size - left-blank - right-blank - ccl-size) / 2
-      left-blank += d
-      right-blank += d
-    }
-    let line-size = calc.max(total-size - left-blank - right-blank, ccl-size)
-    let blank-size = (line-size - ccl-size) / 2
-
-    let top-height = measure(top, styles).height
-    let ccl-height = measure(ccl, styles).height
-
-    let content = block(
-      // stroke: red + 0.3pt, // DEBUG
-      width: complete-size,
-      stack(
-        spacing: horizontal-spacing,
-
-        // Lay out top.
-        {
-          let alignment = left
-          // Maybe a fix for having center premisses with big trees
-          // let alignment = center
-          // If there are only one premisses
-          // if top-height <= 1.5 * ccl-height {
-          //  alignment = left
-          // }
-          set align(alignment)
-          block(
-            // stroke: green + 0.3pt, // DEBUG
-            width: total-size,
-            align(center + bottom, top),
-          )
-        },
-
-        // Lay out bar.
-        {
-          set align(left + horizon)
-          box(
-            // stroke: red + 0.3pt, // DEBUG
-            height: calc.max(name-height, min-bar-height),
-            inset: (bottom: {
-              if (name == none) { 0.2em } else { 0.05em }
-            }),
-            stack(
-              dir: ltr,
-              h(left-blank),
-              line(start: (0pt, 2pt), length: line-size, stroke: stroke),
-              if (name != none) { h(title-inset) },
-              name,
-            ),
-          )
-        },
-
-        // Lay out conclusion.
-        {
-          set align(left)
-          stack(
-            dir: ltr,
-            h(left-blank),
-            block(
-              // stroke: blue + 0.3pt, // DEBUG
-              width: line-size,
-              align(center, ccl),
-            )
-          )
-        },
+  /// This function simply wraps the passed content in the usual
+  /// `(content: .., left-blank: .., right-blank: ..)` dictionary.
+  let layout-content(content) = {
+    // We wrap the content in a box with fixed dimensions so that fractional units
+    // don't come back to haunt us later.
+    let dimensions = measure(content)
+    (
+      content: box(
+        // stroke: yellow + 0.3pt, // DEBUG
+        ..dimensions,
+        content,
       ),
-    )
-
-    return (
-      left-blank: blank-size + left-blank,
-      right-blank: blank-size + right-blank,
-      content: content,
+      left-blank: 0pt,
+      right-blank: 0pt,
     )
   }
 
-  style(styles => {
-    box(
-      // stroke : black + 0.3pt, // DEBUG
-      layout(styles, rule).content,
+
+  /// Lays out multiple premises, spacing them properly.
+  let layout-premises(
+    /// Each laid out premise.
+    ///
+    /// Must be an array of ditionaries with `content`, `left-blank` and
+    /// `right-blank` attributes.
+    premises,
+    /// The minimum amount between each premise.
+    min-spacing,
+    /// If the laid out premises have an inner width smaller than this, their
+    /// spacing will be increased in order to reach this inner width.
+    optimal-inner-width,
+  ) = {
+    let arity = premises.len()
+
+    if arity == 0 {
+      return layout-content(none)
+    }
+
+    if arity == 1 {
+      return premises.at(0)
+    }
+
+    let left-blank = premises.at(0).left-blank
+    let right-blank = premises.at(-1).right-blank
+
+    let initial-content = stack(
+      dir: ltr,
+      spacing: min-spacing,
+      ..premises.map(premise => premise.content),
     )
-  })
+    let initial-inner-width = measure(initial-content).width - left-blank - right-blank
+
+    if initial-inner-width >= optimal-inner-width {
+      return (
+        content: box(initial-content),
+        left-blank: left-blank,
+        right-blank: right-blank,
+      )
+    }
+
+    let remaining-space = optimal-inner-width - initial-inner-width
+    let final-content = stack(
+      dir: ltr,
+      spacing: min-spacing + remaining-space / (arity - 1),
+      ..premises.map(premise => premise.content),
+    )
+
+    (
+      content: box(final-content),
+      left-blank: left-blank,
+      right-blank: right-blank,
+    )
+  }
+
+
+  /// Lays out the horizontal bar of a rule.
+  let layout-bar(
+    /// The stroke to use for the bar.
+    stroke,
+    /// The length of the bar, without taking hangs into account.
+    length,
+    /// How much to extend the bar to the left and to the right.
+    hang,
+    /// The name of the rule, displayed on the right of the bar.
+    ///
+    /// If this is `none`, no name is displayed.
+    name,
+    /// The space to leave between the end of the bar and the name.
+    name-margin,
+    /// The minimum height of the content to return.
+    min-height,
+  ) = {
+    let bar = line(
+      start: (0pt, 0pt),
+      length: length + 2 * hang,
+      stroke: stroke,
+    )
+
+    let (width: name-width, height: name-height) = measure(name)
+
+    let content = {
+      show: box.with(
+        // stroke: green + 0.3pt, // DEBUG
+        height: calc.max(name-height, min-height),
+      )
+
+      set align(horizon)
+
+      if name == none {
+        bar
+      } else {
+        stack(
+          dir: ltr,
+          spacing: name-margin,
+          bar,
+          // Fix size to prevent problems with fractional units later.
+          move(dy: -0.15em, box(width: name-width, height: name-height, name)),
+        )
+      }
+    }
+
+    (
+      content: content,
+      left-blank: hang,
+      right-blank:
+        if name == none {
+          hang
+        } else {
+          hang + name-margin + name-width
+        }
+    )
+  }
+
+
+  /// Lays out the application of a rule.
+  let layout-rule(
+    /// The laid out premises.
+    ///
+    /// This must be a dictionary with `content`, `left-blank`
+    /// and `right-blank` attributes.
+    premises,
+    /// The conclusion, displayed below the bar.
+    conclusion,
+    /// The stroke of the bar.
+    bar-stroke,
+    /// The amount by which to extend the bar on each side.
+    bar-hang,
+    /// The name of the rule, displayed on the right of the bar.
+    ///
+    /// If this is `none`, no name is displayed.
+    name,
+    /// The space between the end of the bar and the rule name.
+    name-margin,
+    /// The spacing above and below the bar.
+    horizontal-spacing,
+    /// The minimum height of the bar element.
+    min-bar-height,
+  ) = {
+    // Fix the dimensions of the conclusion and name to prevent problems with
+    // fractional units later.
+    conclusion = box(conclusion, ..measure(conclusion))
+
+    let premises-inner-width = measure(premises.content).width - premises.left-blank - premises.right-blank
+    let conclusion-width = measure(conclusion).width
+
+    let bar-length = calc.max(premises-inner-width, conclusion-width)
+
+    let bar = layout-bar(bar-stroke, bar-length, bar-hang, name, name-margin, min-bar-height)
+
+    let left-start
+    let right-start
+
+    let premises-left-offset
+    let conclusion-left-offset
+
+    if premises-inner-width > conclusion-width {
+      left-start = calc.max(premises.left-blank, bar.left-blank)
+      right-start = calc.max(premises.right-blank, bar.right-blank)
+      premises-left-offset = left-start - premises.left-blank
+      conclusion-left-offset = left-start + (premises-inner-width - conclusion-width) / 2
+    } else {
+      let premises-left-hang = premises.left-blank - (bar-length - premises-inner-width) / 2
+      let premises-right-hang = premises.right-blank - (bar-length - premises-inner-width) / 2
+      left-start = calc.max(premises-left-hang, bar.left-blank)
+      right-start = calc.max(premises-right-hang, bar.right-blank)
+      premises-left-offset = left-start + (bar-length - premises-inner-width) / 2 - premises.left-blank
+      conclusion-left-offset = left-start
+    }
+    let bar-left-offset = left-start - bar.left-blank
+
+    let content = {
+      set align(bottom + left)
+
+      // show: box.with(stroke: yellow + 0.3pt) // DEBUG
+
+      stack(
+        dir: ttb,
+        spacing: horizontal-spacing,
+        h(premises-left-offset) + premises.content,
+        h(bar-left-offset) + bar.content,
+        h(conclusion-left-offset) + conclusion,
+      )
+    }
+
+    (
+      content: box(content),
+      left-blank: left-start + (bar-length - conclusion-width) / 2,
+      right-blank: right-start + (bar-length - conclusion-width) / 2,
+    )
+  }
+
+
+  /// Lays out an entire proof tree.
+  ///
+  /// All lengths passed to this function must be resolved.
+  let layout-tree(
+    /// The rule containing the tree to lay out.
+    rule,
+    /// The minimum amount between each premise.
+    min-premise-spacing,
+    /// The stroke of the bar.
+    bar-stroke,
+    /// The amount by which to extend the bar on each side.
+    bar-hang,
+    /// The space between the end of the bar and the rule name.
+    name-margin,
+    /// The margin above and below the bar.
+    horizontal-spacing,
+    /// The minimum height of the bar element.
+    min-bar-height,
+  ) = {
+    if type(rule) != dictionary {
+      return layout-content(rule)
+    }
+
+    let premises = layout-premises(
+      rule.premises.map(premise => layout-tree(
+        premise,
+        min-premise-spacing,
+        bar-stroke,
+        bar-hang,
+        name-margin,
+        horizontal-spacing,
+        min-bar-height,
+      )),
+      min-premise-spacing,
+      measure(rule.conclusion).width,
+    )
+
+    layout-rule(
+      premises,
+      rule.conclusion,
+      bar-stroke,
+      bar-hang,
+      rule.name,
+      name-margin,
+      horizontal-spacing,
+      min-bar-height,
+    )
+  }
+
+  context {
+    let tree = layout-tree(
+      rule,
+      prem-min-spacing.to-absolute(),
+      stroke,
+      title-inset.to-absolute(),
+      title-inset.to-absolute(),
+      horizontal-spacing.to-absolute(),
+      min-bar-height.to-absolute(),
+    ).content
+
+    block(
+      // stroke : black + 0.3pt, // DEBUG
+      ..measure(tree),
+      tree,
+    )
+  }
 }

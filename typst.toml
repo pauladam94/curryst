@@ -2,9 +2,12 @@
 name = "curryst"
 version = "0.1.1"
 entrypoint = "curryst.typ"
-authors = ["Rémi Hutin <https://github.com/remih23>", "Paul Adam <https://github.com/pauladam94>"]
+authors = ["Rémi Hutin <@remih23>", "Paul Adam <@pauladam94>", "Malo <@MDLC01>"]
 license = "MIT"
-description = "Typesetting of trees of inference rules in Typst."
-exclude = ["examples", "*.pdf"]
-keywords = ["inference rules", "logic", "prooftree"]
-compiler = "0.10.0"
+description = "Typeset trees of inference rules."
+repository = "https://github.com/pauladam94/curryst"
+keywords = ["proof tree", "prooftree", "inference", "logic"]
+categories = ["components", "visualization", "integration"]
+disciplines = ["computer-science", "mathematics"]
+compiler = "0.11.0"
+exclude = [".gitignore", "README.md", "examples/*", "tests/*"]
