@@ -10,4 +10,4 @@ keywords = ["proof tree", "prooftree", "inference", "logic"]
 categories = ["components", "visualization", "integration"]
 disciplines = ["computer-science", "mathematics"]
 compiler = "0.11.0"
-exclude = ["README.md", "examples/*", "tests/*"]
+exclude = [".gitignore", "README.md", "examples/*", "tests/*"]
