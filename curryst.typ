@@ -12,17 +12,18 @@
   ..premises
 ) = {
   assert(
-    name == none or type(name) == str or type(name) == content,
+    name == none or type(name) == str or type(name) == content or type(name) == symbol,
     message: "The name of a rule must be some content.",
   )
   assert(
-    type(conclusion) == str or type(conclusion) == content,
+    type(conclusion) == str or type(conclusion) == content or type(conclusion) == symbol,
     message: "The conclusion of a rule must be some content. In particular, it cannot be another rule.",
   )
   for premise in premises.pos() {
     assert(
       type(premise) == str
         or type(premise) == content
+        or type(premise) == symbol
         or (
           type(premise) == dictionary
             and "name" in premise
