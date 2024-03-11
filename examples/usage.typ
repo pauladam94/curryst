@@ -3,6 +3,7 @@
 #set page(width: auto, height: auto, margin: 0.5cm)
 
 #let tree = rule(
+  label: [Label],
   name: [Rule name],
   [Conclusion],
   [Premise 1],
