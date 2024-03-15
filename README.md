@@ -3,15 +3,6 @@
 A Typst package for typesetting proof trees.
 
 
-## Import
-
-You can import the latest version of this package with:
-
-```typst
-#import "@preview/curryst:0.1.1": rule, proof-tree
-```
-
-
 ## Basic usage
 
 To display a proof tree, you first need to create a tree, using the `rule` function. Its first argument is the conclusion, and the other positional arguments are the premises. It also accepts a `name` for the rule name.
