@@ -23,6 +23,14 @@
 
 
 #test(
+  label: [Label],
+  name: [Axiom],
+  [Conclusion],
+)
+
+
+#test(
+  label: [Label],
   name: [Name],
   [Long conclusion],
   [Premise],
@@ -30,6 +38,7 @@
 
 
 #test(
+  label: [Label],
   name: [Name],
   [Conclusion],
   [Long premise],
@@ -37,6 +46,7 @@
 
 
 #test(
+  label: [Label],
   name: [Name],
   [Conclusion],
   [Premise 1],
@@ -45,6 +55,7 @@
 
 
 #test(
+  label: [Label],
   name: [Name],
   [Very long conclusion],
   [Prem. 1],
@@ -53,6 +64,7 @@
 
 
 #test(
+  label: [Label],
   name: [Name],
   [Very long conclusion],
   rule(
@@ -64,9 +76,11 @@
 
 
 #test(
+  label: [Label],
   name: [Name],
   [Very long conclusion],
   rule(
+    label: [Other label],
     name: [Other name],
     [Prem. 1],
     [Hypothesis 1],
@@ -79,7 +93,6 @@
   name: [Name],
   [Very long conclusion],
   rule(
-    name: [],
     [Prem. 1],
     [Hypothesis 1],
   ),
@@ -218,6 +231,7 @@
   name: [Name],
   [Conclusion],
   rule(
+    label: [Label 1],
     [Premise 1],
     [Hypothesis 1],
   ),
@@ -227,6 +241,7 @@
     [Hypothesis 2],
   ),
   rule(
+    label: [Label 3],
     name: [Name 3],
     [Premise 3],
     [Hypothesis 3],
@@ -245,6 +260,7 @@
   name: [Name],
   [Conclusion],
   rule(
+    label: [Label 1],
     [Premise 1],
     [Hypothesis 1],
   ),
@@ -254,6 +270,7 @@
     [Hypothesis 2],
   ),
   rule(
+    label: [Label 3],
     name: [Name 3],
     [Premise 3],
     [Hypothesis 3],

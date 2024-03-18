@@ -3,6 +3,8 @@
 /// You can render a rule created with this function using the `proof-tree`
 /// function.
 #let rule(
+  /// The label of the rule, displayed on the left of the horizontal bar.
+  label: none,
   /// The name of the rule, displayed on the right of the horizontal bar.
   name: none,
   /// The conclusion of the rule.
@@ -11,6 +13,10 @@
   /// function, or some content.
   ..premises
 ) = {
+  assert(
+    label == none or type(label) == str or type(label) == content or type(label) == symbol,
+    message: "The label of a rule must be some content.",
+  )
   assert(
     name == none or type(name) == str or type(name) == content or type(name) == symbol,
     message: "The name of a rule must be some content.",
@@ -38,6 +44,7 @@
     message: "Unexpected named arguments to `rule`.",
   )
   (
+    label: label,
     name: name,
     conclusion: conclusion,
     premises: premises.pos()
@@ -53,7 +60,8 @@
   /// The minimum amount of space between two premises.
   prem-min-spacing: 15pt,
   /// The amount width with which to extend the horizontal bar beyond the
-  /// content. Also determines how far from the bar the rule name is displayed.
+  /// content. Also determines how far from the bar labels and names are
+  /// displayed.
   title-inset: 2pt,
   /// The stroke to use for the horizontal bars.
   stroke: stroke(0.4pt),
@@ -157,12 +165,17 @@
     length,
     /// How much to extend the bar to the left and to the right.
     hang,
+    /// The label of the rule, displayed on the left of the bar.
+    ///
+    /// If this is `none`, no label is displayed.
+    label,
     /// The name of the rule, displayed on the right of the bar.
     ///
     /// If this is `none`, no name is displayed.
     name,
-    /// The space to leave between the end of the bar and the name.
-    name-margin,
+    /// The space to leave between the label and the bar, and between the bar
+    /// and the name.
+    margin,
     /// The minimum height of the content to return.
     min-height,
   ) = {
@@ -172,38 +185,50 @@
       stroke: stroke,
     )
 
+    let (width: label-width, height: label-height) = measure(label)
     let (width: name-width, height: name-height) = measure(name)
 
     let content = {
       show: box.with(
         // stroke: green + 0.3pt, // DEBUG
-        height: calc.max(name-height, min-height),
+        height: calc.max(label-height, name-height, min-height),
       )
 
       set align(horizon)
 
-      if name == none {
-        bar
+      let bake(body) = if body == none {
+        none
       } else {
-        stack(
-          dir: ltr,
-          spacing: name-margin,
-          bar,
-          // Fix size to prevent problems with fractional units later.
-          move(dy: -0.15em, box(width: name-width, height: name-height, name)),
-        )
+        move(dy: -0.15em, box(body, ..measure(body)))
       }
+
+      let parts = (
+        bake(label),
+        bar,
+        bake(name),
+      ).filter(p => p != none)
+
+      stack(
+        dir: ltr,
+        spacing: margin,
+        ..parts,
+      )
     }
 
     (
       content: content,
-      left-blank: hang,
+      left-blank:
+        if label == none {
+          hang
+        } else {
+          hang + margin + label-width
+        },
       right-blank:
         if name == none {
           hang
         } else {
-          hang + name-margin + name-width
-        }
+          hang + margin + name-width
+        },
     )
   }
 
@@ -221,12 +246,17 @@
     bar-stroke,
     /// The amount by which to extend the bar on each side.
     bar-hang,
+    /// The label of the rule, displayed on the left of the bar.
+    ///
+    /// If this is `none`, no label is displayed.
+    label,
     /// The name of the rule, displayed on the right of the bar.
     ///
     /// If this is `none`, no name is displayed.
     name,
-    /// The space between the end of the bar and the rule name.
-    name-margin,
+    /// The space to leave between the label and the bar, and between the bar
+    /// and the name.
+    bar-margin,
     /// The spacing above and below the bar.
     horizontal-spacing,
     /// The minimum height of the bar element.
@@ -241,7 +271,7 @@
 
     let bar-length = calc.max(premises-inner-width, conclusion-width)
 
-    let bar = layout-bar(bar-stroke, bar-length, bar-hang, name, name-margin, min-bar-height)
+    let bar = layout-bar(bar-stroke, bar-length, bar-hang, label, name, bar-margin, min-bar-height)
 
     let left-start
     let right-start
@@ -298,8 +328,9 @@
     bar-stroke,
     /// The amount by which to extend the bar on each side.
     bar-hang,
-    /// The space between the end of the bar and the rule name.
-    name-margin,
+    /// The space to leave between the label and the bar, and between the bar
+    /// and the name.
+    bar-margin,
     /// The margin above and below the bar.
     horizontal-spacing,
     /// The minimum height of the bar element.
@@ -315,7 +346,7 @@
         min-premise-spacing,
         bar-stroke,
         bar-hang,
-        name-margin,
+        bar-margin,
         horizontal-spacing,
         min-bar-height,
       )),
@@ -328,8 +359,9 @@
       rule.conclusion,
       bar-stroke,
       bar-hang,
+      rule.label,
       rule.name,
-      name-margin,
+      bar-margin,
       horizontal-spacing,
       min-bar-height,
     )

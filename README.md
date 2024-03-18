@@ -14,10 +14,11 @@ You can import the latest version of this package with:
 
 ## Basic usage
 
-To display a proof tree, you first need to create a tree, using the `rule` function. Its first argument is the conclusion, and the other positional arguments are the premises. It also accepts a `name` for the rule name.
+To display a proof tree, you first need to create a tree, using the `rule` function. Its first argument is the conclusion, and the other positional arguments are the premises. It also accepts a `name` for the rule name, displayed on the right of the bar, as well as a `label`, displayed on the left of the bar.
 
 ```typ
 #let tree = rule(
+  label: [Label],
   name: [Rule name],
   [Conclusion],
   [Premise 1],
@@ -131,7 +132,7 @@ The `proof-tree` function accepts multiple named arguments that let you customiz
   <dd>The minimum amount of space between two premises.</dd>
 
   <dt><code>title-inset</code></dt>
-  <dd>The amount width with which to extend the horizontal bar beyond the content. Also determines how far from the bar the rule name is displayed.</dd>
+  <dd>The amount width with which to extend the horizontal bar beyond the content. Also determines how far from the bar labels and names are displayed.</dd>
 
   <dt><code>stroke</code></dt>
   <dd>The stroke to use for the horizontal bars.</dd>
