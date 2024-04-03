@@ -1,6 +1,6 @@
 #import "../curryst.typ": rule, proof-tree
 #set document(date: none)
-#set page(width: auto, height: auto, margin: 0.5cm)
+#set page(width: auto, height: auto, margin: 0.5cm, fill: white)
 
 #proof-tree(
   rule(
