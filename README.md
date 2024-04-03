@@ -34,7 +34,7 @@ Then, you can display the tree with the `proof-tree` function:
 
 In this case, we get the following result:
 
-![A proof tree with three premises, a conclusion, and a rule name.](examples/usage.png)
+![A proof tree with three premises, a conclusion, and a rule name.](examples/usage.svg)
 
 Proof trees can be part of mathematical formulas:
 
@@ -52,7 +52,7 @@ $
 $Pi$ constitutes a derivation of $phi$.s
 ```
 
-![The rendered document.](examples/math-formula.png)
+![The rendered document.](examples/math-formula.svg)
 
 You can specify a rule as the premises of a rule in order to create a tree:
 
@@ -77,11 +77,11 @@ You can specify a rule as the premises of a rule in order to create a tree:
 )
 ```
 
-![The rendered tree.](examples/rule-as-premise.png)
+![The rendered tree.](examples/rule-as-premise.svg)
 
 As an example, here is a natural deduction proof tree generated with Curryst:
 
-![The rendered tree.](examples/natural-deduction.png)
+![The rendered tree.](examples/natural-deduction.svg)
 
 <details>
   <summary>Show code</summary>
