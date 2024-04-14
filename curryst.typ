@@ -142,6 +142,7 @@
       )
     }
 
+    // Conclusion is wider than the premises: they need to be spaced out.
     let remaining-space = optimal-inner-width - initial-inner-width
     let final-content = stack(
       dir: ltr,
@@ -154,6 +155,67 @@
       left-blank: left-blank,
       right-blank: right-blank,
     )
+  }
+
+
+  /// Lays out multiple premises that are all leaves, spacing them properly, and
+  /// optionally creating multiple lines if there is not enough available
+  /// horizontal space.
+  let layout-leaf-premises(
+    /// Each laid out premise.
+    ///
+    /// Must be an array of content-like (meaning `content`, `string`, etc.).
+    premises,
+    /// The minimum amount between each premise.
+    min-spacing,
+    /// If the laid out premises have an inner width smaller than this, their
+    /// spacing will be increased in order to reach this inner width.
+    optimal-inner-width,
+    /// The available width for the returned content.
+    ///
+    /// `none` is interpreted as infinite available width.
+    ///
+    /// Ideally, the width of the returned content should be bounded by this
+    /// value, although no guarantee is made.
+    available-width,
+  ) = {
+    // By default, typeset like a regular tree.
+
+    let default = layout-premises(
+      premises.map(layout-content),
+      min-spacing,
+      optimal-inner-width,
+    )
+
+    if available-width == none or measure(default.content).width <= available-width {
+      return default
+    }
+
+    // If there is not enough horizontal space, use multiple lines.
+
+    let line-builder = stack.with(
+      dir: ltr,
+      spacing: min-spacing,
+    )
+
+    let lines = ((), )
+    for premise in premises {
+      let augmented-line = lines.last() + (premise, )
+      if available-width == none or measure(line-builder(..augmented-line)).width <= available-width {
+        lines.last() = augmented-line
+      } else {
+        lines.push((premise, ))
+      }
+    }
+
+    layout-content({
+      set align(center)
+      stack(
+        dir: ttb,
+        spacing: 0.7em,
+        ..lines.map(line => line-builder(..line)),
+      )
+    })
   }
 
 
@@ -322,6 +384,13 @@
   let layout-tree(
     /// The rule containing the tree to lay out.
     rule,
+    /// The available width for the tree.
+    ///
+    /// `none` is interpreted as infinite available width.
+    ///
+    /// Ideally, the width of the returned tree should be bounded by this value,
+    /// although no guarantee is made.
+    available-width,
     /// The minimum amount between each premise.
     min-premise-spacing,
     /// The stroke of the bar.
@@ -340,19 +409,43 @@
       return layout-content(rule)
     }
 
-    let premises = layout-premises(
-      rule.premises.map(premise => layout-tree(
-        premise,
+    // A small branch is a tree whose premises (if any) are all leaves. The
+    // premises of such a tree can be typeset in multiple lines in case there is
+    // not enough horizontal space.
+    let is-small-branch = rule.premises.all(premise => type(premise) != dictionary)
+    let premises = if is-small-branch {
+      let width-available-to-premises = none
+      if available-width != none {
+        width-available-to-premises = available-width - bar-hang * 2
+        if rule.name != none {
+          width-available-to-premises -= bar-margin + measure(rule.name).width
+        }
+        if rule.label != none {
+          width-available-to-premises -= bar-margin + measure(rule.label).width
+        }
+      }
+      layout-leaf-premises(
+        rule.premises,
         min-premise-spacing,
-        bar-stroke,
-        bar-hang,
-        bar-margin,
-        horizontal-spacing,
-        min-bar-height,
-      )),
-      min-premise-spacing,
-      measure(rule.conclusion).width,
-    )
+        measure(rule.conclusion).width,
+        width-available-to-premises,
+      )
+    } else {
+      layout-premises(
+        rule.premises.map(premise => layout-tree(
+          premise,
+          none,
+          min-premise-spacing,
+          bar-stroke,
+          bar-hang,
+          bar-margin,
+          horizontal-spacing,
+          min-bar-height,
+        )),
+        min-premise-spacing,
+        measure(rule.conclusion).width,
+      )
+    }
 
     layout-rule(
       premises,
@@ -367,9 +460,11 @@
     )
   }
 
-  context {
+
+  context layout(available => {
     let tree = layout-tree(
       rule,
+      available.width,
       prem-min-spacing.to-absolute(),
       stroke,
       title-inset.to-absolute(),
@@ -381,7 +476,8 @@
     block(
       // stroke : black + 0.3pt, // DEBUG
       ..measure(tree),
+      breakable: false,
       tree,
     )
-  }
+  })
 }

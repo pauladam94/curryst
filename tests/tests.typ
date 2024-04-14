@@ -2,10 +2,11 @@
 #set document(date: none)
 #set page(margin: 0.5cm, width: auto, height: auto)
 
-#let test(config: (:), ..args) = {
+#let test(width: auto, config: (:), ..args) = {
   pagebreak(weak: true)
   box(
     stroke: 0.3pt + red,
+    width: width,
     proof-tree(rule(..args), ..config)
   )
 }
@@ -249,7 +250,6 @@
 )
 
 
-
 #test(
   config: (
     prem-min-spacing: 0pt,
@@ -275,4 +275,89 @@
     [Premise 3],
     [Hypothesis 3],
   ),
+)
+
+
+// Test leafs are shown on multiple lines when appropriate.
+
+#test(
+  width: 5cm,
+  name: $or_e$,
+  $Gamma tack psi$,
+  $Gamma tack phi_1 or phi_2$,
+  $Gamma, phi_1 tack psi$,
+  $Gamma, phi_2 tack psi$,
+)
+
+#test(
+  width: 5cm,
+  config: (
+    prem-min-spacing: 1cm
+  ),
+  [The conclusion],
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+)
+
+#test(
+  width: 5cm,
+  config: (
+    prem-min-spacing: 1cm
+  ),
+  [The conclusion is a bit wide],
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+)
+
+#test(
+  width: 5cm,
+  config: (
+    prem-min-spacing: 1cm
+  ),
+  [The conclusion is hugely wide!!!],
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+)
+
+#test(
+  width: 5cm,
+  config: (
+    prem-min-spacing: 1cm,
+    title-inset: 0pt,
+  ),
+  [The conclusion],
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+)
+
+#test(
+  width: 8cm,
+  config: (
+    prem-min-spacing: 1cm,
+    title-inset: 0.5cm,
+  ),
+  name: rect(width: 0.5cm),
+  label: rect(width: 0.5cm),
+  [The conclusion],
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+)
+
+#test(
+  width: 7.9cm,
+  config: (
+    prem-min-spacing: 1cm,
+    title-inset: 0.5cm,
+  ),
+  name: rect(width: 0.5cm),
+  label: rect(width: 0.5cm),
+  [The conclusion],
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
 )
