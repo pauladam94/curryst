@@ -213,7 +213,9 @@
       stack(
         dir: ttb,
         spacing: 0.7em,
-        ..lines.map(line => line-builder(..line)),
+        ..lines
+          .filter(line => line.len() != 0)
+          .map(line => line-builder(..line)),
       )
     })
   }
