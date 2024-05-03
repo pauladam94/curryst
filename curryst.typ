@@ -425,6 +425,8 @@
         if rule.label != none {
           width-available-to-premises -= bar-margin + measure(rule.label).width
         }
+        // This fixes some rounding issues in auto sized containers.
+        width-available-to-premises += 0.00000001pt
       }
       layout-leaf-premises(
         rule.premises,
