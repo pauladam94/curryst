@@ -4,7 +4,7 @@
 
 #let test(width: auto, config: (:), ..args) = {
   pagebreak(weak: true)
-  box(
+  block(
     stroke: 0.3pt + red,
     width: width,
     proof-tree(rule(..args), ..config)
@@ -361,3 +361,18 @@
   rect(width: 1cm),
   rect(width: 1cm),
 )
+
+#{
+  // This test triggers a very specific issue. I can't find a way to reproduce
+  // it without using Libertinus Serif as the font.
+  // The issue is that rules are incorrectly laid out vertically due to rounding
+  // errors. Note that, for this test to work, the container in the `test`
+  // function should be a `block` and not a `box`.
+  set text(font: "Libertinus Serif")
+  test(
+    name: [......................],
+    [...],
+    [................],
+    [................],
+  )
+}

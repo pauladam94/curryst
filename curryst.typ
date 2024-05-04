@@ -213,7 +213,9 @@
       stack(
         dir: ttb,
         spacing: 0.7em,
-        ..lines.map(line => line-builder(..line)),
+        ..lines
+          .filter(line => line.len() != 0)
+          .map(line => line-builder(..line)),
       )
     })
   }
@@ -423,6 +425,8 @@
         if rule.label != none {
           width-available-to-premises -= bar-margin + measure(rule.label).width
         }
+        // This fixes some rounding issues in auto sized containers.
+        width-available-to-premises += 0.00000001pt
       }
       layout-leaf-premises(
         rule.premises,
