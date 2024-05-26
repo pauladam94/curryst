@@ -376,3 +376,44 @@
     [................],
   )
 }
+
+
+#test(
+  [This is a very wide conclusion, wider than all premises combined],
+  [Premise],
+  [Another premise.],
+)
+
+#test(
+  [This is a very wide conclusion, wider than all premises combined],
+  rule(
+    [Premise],
+    [Very, very wide hypothesis...]
+  ),
+  [Another premise.],
+)
+
+#test(
+  [This is a very wide conclusion, wider than all premises combined],
+  rule(
+    [Premise],
+    [Hyyyyyyyyyyyyyyyyyyypothesis]
+  ),
+  rule(
+    [Premise],
+    [Hyyyyyyyyyyyyyyyyyyypothesis as well]
+  ),
+)
+
+
+#test(
+  [This is a wide conclusion, but not the widest],
+  rule(
+    [Premise],
+    [Hyyyyyyyyyyyyyyyyyyypothesis]
+  ),
+  rule(
+    [Premise],
+    [Hyyyyyyyyyyyyyyyyyyypothesis as well]
+  ),
+)

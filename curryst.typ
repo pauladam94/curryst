@@ -146,7 +146,7 @@
     let remaining-space = optimal-inner-width - initial-inner-width
     let final-content = stack(
       dir: ltr,
-      spacing: min-spacing + remaining-space / (arity - 1),
+      spacing: min-spacing + remaining-space / (arity + 1),
       ..premises.map(premise => premise.content),
     )
 
