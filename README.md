@@ -49,7 +49,7 @@ $
     )
   )
 $
-$Pi$ constitutes a derivation of $phi$.s
+$Pi$ constitutes a derivation of $phi$.
 ```
 
 ![The rendered document.](examples/math-formula.svg)
