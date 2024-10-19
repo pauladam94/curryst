@@ -80,6 +80,13 @@
   /// even if some rules have no name (unless a rule is higher than a single
   /// line).
   min-bar-height: 0.8em,
+  /// Set the orientation of the proof tree to top to bottom instead of bottom
+  /// to top.
+  ///
+  /// If set to true, the conclusion will be at the top, and the premises will
+  /// be at the bottom. The proof tree will also be aligned to the top instead
+  /// of the bottom.
+  top-to-bottom: false,
 ) = {
   /// Lays out some content.
   ///
@@ -359,12 +366,23 @@
     let bar-left-offset = left-start - bar.left-blank
 
     let content = {
-      set align(bottom + left)
-
       // show: box.with(stroke: yellow + 0.3pt) // DEBUG
 
+      let stack-dir
+      let align-y
+      
+      if top-to-bottom {
+        align-y = top
+        stack-dir = btt
+      } else {
+        align-y = bottom
+        stack-dir = ttb
+      }
+
+      set align(align-y + left)
+      
       stack(
-        dir: ttb,
+        dir: stack-dir,
         spacing: horizontal-spacing,
         h(premises-left-offset) + premises.content,
         h(bar-left-offset) + bar.content,
