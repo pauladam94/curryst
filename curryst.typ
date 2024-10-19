@@ -465,7 +465,7 @@
   }
 
 
-  context layout(available => {
+  layout(available => {
     let tree = layout-tree(
       rule,
       available.width,
