@@ -3,12 +3,14 @@
 #set page(margin: 0.5cm, width: auto, height: auto)
 
 #let test(width: auto, config: (:), ..args) = {
-  pagebreak(weak: true)
-  block(
-    stroke: 0.3pt + red,
-    width: width,
-    proof-tree(rule(..args), ..config)
-  )
+  for dir in (btt, ttb) {
+    pagebreak(weak: true)
+    block(
+      stroke: 0.3pt + red,
+      width: width,
+      proof-tree(dir: dir, rule(..args), ..config)
+    )
+  }
 }
 
 
