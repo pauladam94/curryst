@@ -80,12 +80,11 @@
   /// even if some rules have no name (unless a rule is higher than a single
   /// line).
   min-bar-height: 0.8em,
-  /// Set the orientation of the proof tree to top to bottom instead of bottom
-  /// to top.
+  /// The orientation of the proof tree.
   ///
   /// If set to ttb, the conclusion will be at the top, and the premises will
-  /// be at the bottom. The proof tree will also be aligned to the top instead
-  /// of the bottom.
+  /// be at the bottom. Defaults to btt, the conclusion being at the bottom
+  /// and the premises at the top.
   dir: btt,
 ) = {
   /// Lays out some content.
