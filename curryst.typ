@@ -367,16 +367,8 @@
     let content = {
       // show: box.with(stroke: yellow + 0.3pt) // DEBUG
 
-      let stack-dir
-      let align-y
-      
-      if dir == ttb {
-        align-y = top
-        stack-dir = btt
-      } else {
-        align-y = bottom
-        stack-dir = ttb
-      }
+      let stack-dir = dir.inv()
+      let align-y = dir.start()
 
       set align(align-y + left)
       
