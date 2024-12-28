@@ -83,10 +83,10 @@
   /// Set the orientation of the proof tree to top to bottom instead of bottom
   /// to top.
   ///
-  /// If set to true, the conclusion will be at the top, and the premises will
+  /// If set to ttb, the conclusion will be at the top, and the premises will
   /// be at the bottom. The proof tree will also be aligned to the top instead
   /// of the bottom.
-  top-to-bottom: false,
+  dir: btt,
 ) = {
   /// Lays out some content.
   ///
@@ -371,7 +371,7 @@
       let stack-dir
       let align-y
       
-      if top-to-bottom {
+      if dir == ttb {
         align-y = top
         stack-dir = btt
       } else {
