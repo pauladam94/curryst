@@ -14,34 +14,33 @@
   ..premises
 ) = {
   assert(
-    label == none or type(label) == str or type(label) == content or type(label) == symbol,
-    message: "The label of a rule must be some content.",
+    label == none or type(label) in (str, content, symbol),
+    message: "the label of a rule must be some content",
   )
   assert(
-    name == none or type(name) == str or type(name) == content or type(name) == symbol,
-    message: "The name of a rule must be some content.",
+    name == none or type(name) in (str, content, symbol),
+    message: "the name of a rule must be some content",
   )
   assert(
-    type(conclusion) == str or type(conclusion) == content or type(conclusion) == symbol,
-    message: "The conclusion of a rule must be some content. In particular, it cannot be another rule.",
+    type(conclusion) in (str, content, symbol),
+    message: "the conclusion of a rule must be some content (it cannot be another rule)",
   )
   for premise in premises.pos() {
     assert(
-      type(premise) == str
-        or type(premise) == content
-        or type(premise) == symbol
+      type(premise) in (str, content, symbol)
         or (
           type(premise) == dictionary
             and "name" in premise
             and "conclusion" in premise
             and "premises" in premise
         ),
-      message: "A premise must be some content or another rule.",
+      message: "a premise must be some content or another rule",
     )
   }
-  assert(
-    premises.named() == (:),
-    message: "Unexpected named arguments to `rule`.",
+  assert.eq(
+    premises.named().len(),
+    0,
+    message: "unexpected named arguments to `rule`",
   )
   (
     label: label,
