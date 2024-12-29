@@ -79,6 +79,12 @@
   /// even if some rules have no name (unless a rule is higher than a single
   /// line).
   min-bar-height: 0.8em,
+  /// The orientation of the proof tree.
+  ///
+  /// If set to ttb, the conclusion will be at the top, and the premises will
+  /// be at the bottom. Defaults to btt, the conclusion being at the bottom
+  /// and the premises at the top.
+  dir: btt,
 ) = {
   /// Lays out some content.
   ///
@@ -358,12 +364,15 @@
     let bar-left-offset = left-start - bar.left-blank
 
     let content = {
-      set align(bottom + left)
-
       // show: box.with(stroke: yellow + 0.3pt) // DEBUG
 
+      let stack-dir = dir.inv()
+      let align-y = dir.start()
+
+      set align(align-y + left)
+      
       stack(
-        dir: ttb,
+        dir: stack-dir,
         spacing: horizontal-spacing,
         h(premises-left-offset) + premises.content,
         h(bar-left-offset) + bar.content,
