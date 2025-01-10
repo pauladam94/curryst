@@ -141,6 +141,9 @@ The `proof-tree` function accepts multiple named arguments that let you customiz
 
   <dt><code>min-bar-height</code></dt>
   <dd>The minimum height of the box containing the horizontal bar.</dd>
+
+  <dt><code>dir</code></dt>
+  <dd>The orientation of the proof tree (either <code>btt</code> or <code>ttb</code>, <code>btt</code> being the default).</dd>
 </dl>
 
 For more information, please refer to the documentation in [`curryst.typ`](curryst.typ).
