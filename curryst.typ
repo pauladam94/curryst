@@ -85,6 +85,8 @@
   /// be at the bottom. Defaults to btt, the conclusion being at the bottom
   /// and the premises at the top.
   dir: btt,
+  /// Set to `true` to produce an inlined tree
+  inline: false,
 ) = {
   /// Lays out some content.
   ///
@@ -110,7 +112,7 @@
   let layout-premises(
     /// Each laid out premise.
     ///
-    /// Must be an array of ditionaries with `content`, `left-blank` and
+    /// Must be an array of dictionaries with `content`, `left-blank` and
     /// `right-blank` attributes.
     premises,
     /// The minimum amount between each premise.
@@ -472,24 +474,31 @@
     )
   }
 
+  let layout-all() = {
+    layout(available => {
+      let tree = layout-tree(
+        rule,
+        available.width,
+        prem-min-spacing.to-absolute(),
+        stroke,
+        title-inset.to-absolute(),
+        title-inset.to-absolute(),
+        horizontal-spacing.to-absolute(),
+        min-bar-height.to-absolute(),
+      ).content
 
-  layout(available => {
-    let tree = layout-tree(
-      rule,
-      available.width,
-      prem-min-spacing.to-absolute(),
-      stroke,
-      title-inset.to-absolute(),
-      title-inset.to-absolute(),
-      horizontal-spacing.to-absolute(),
-      min-bar-height.to-absolute(),
-    ).content
+      block(
+        // stroke : black + 0.3pt, // DEBUG
+        ..measure(tree),
+        breakable: false,
+        tree,
+      )
+    })
+  }
 
-    block(
-      // stroke : black + 0.3pt, // DEBUG
-      ..measure(tree),
-      breakable: false,
-      tree,
-    )
-  })
+  if inline {
+    box(layout-all())
+  } else {
+    layout-all()
+  }
 }
