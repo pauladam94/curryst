@@ -1,8 +1,8 @@
-#import "../curryst.typ": rule, proof-tree
+#import "../curryst.typ": rule, prooftree
 #set document(date: none)
 #set page(width: auto, height: auto, margin: 0.5cm, fill: white)
 
-#proof-tree(
+#prooftree(
   rule(
     name: $R$,
     $C_1 or C_2 or C_3$,

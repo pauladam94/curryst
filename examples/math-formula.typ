@@ -1,10 +1,10 @@
-#import "../curryst.typ": rule, proof-tree
+#import "../curryst.typ": rule, prooftree
 #set document(date: none)
 #set page(width: auto, height: auto, margin: 0.5cm, fill: white)
 
 Consider the following tree:
 $
-  Pi quad = quad #proof-tree(
+  Pi quad = quad #prooftree(
     rule(
       $phi$,
       $Pi_1$,

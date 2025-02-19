@@ -1,4 +1,4 @@
-#import "../curryst.typ" : rule, proof-tree
+#import "../curryst.typ" : rule, prooftree
 #set document(date: none)
 #set page(margin: 0.5cm, width: auto, height: auto)
 
@@ -8,7 +8,7 @@
     block(
       stroke: 0.3pt + red,
       width: width,
-      proof-tree(dir: dir, rule(..args), ..config)
+      prooftree(dir: dir, rule(..args), ..config)
     )
   }
 }

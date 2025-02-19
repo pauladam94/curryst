@@ -1,6 +1,6 @@
 /// Creates an inference rule.
 ///
-/// You can render a rule created with this function using the `proof-tree`
+/// You can render a rule created with this function using the `prooftree`
 /// function.
 #let rule(
   /// The label of the rule, displayed on the left of the horizontal bar.
@@ -51,7 +51,7 @@
 }
 
 /// Lays out a proof tree.
-#let proof-tree(
+#let prooftree(
   /// The rule to lay out.
   ///
   /// Such a rule can be constructed using the `rule` function.
@@ -370,7 +370,7 @@
       let align-y = dir.start()
 
       set align(align-y + left)
-      
+
       stack(
         dir: stack-dir,
         spacing: horizontal-spacing,

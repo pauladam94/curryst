@@ -1,4 +1,4 @@
-#import "../curryst.typ": rule, proof-tree
+#import "../curryst.typ": rule, prooftree
 #set document(date: none)
 #set page(width: auto, height: auto, margin: 0.5cm, fill: white)
 
@@ -11,4 +11,4 @@
   [Premise 3]
 )
 
-#proof-tree(tree)
+#prooftree(tree)

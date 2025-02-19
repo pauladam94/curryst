@@ -8,7 +8,7 @@ A Typst package for typesetting proof trees.
 You can import the latest version of this package with:
 
 ```typst
-#import "@preview/curryst:0.4.0": rule, proof-tree
+#import "@preview/curryst:0.4.0": rule, prooftree
 ```
 
 ## Basic usage
@@ -26,10 +26,10 @@ To display a proof tree, you first need to create a tree, using the `rule` funct
 )
 ```
 
-Then, you can display the tree with the `proof-tree` function:
+Then, you can display the tree with the `prooftree` function:
 
 ```typ
-#proof-tree(tree)
+#prooftree(tree)
 ```
 
 In this case, we get the following result:
@@ -41,7 +41,7 @@ Proof trees can be part of mathematical formulas:
 ```typ
 Consider the following tree:
 $
-  Pi quad = quad #proof-tree(
+  Pi quad = quad #prooftree(
     rule(
       $phi$,
       $Pi_1$,
@@ -57,7 +57,7 @@ $Pi$ constitutes a derivation of $phi$.
 You can specify a rule as the premises of a rule in order to create a tree:
 
 ```typ
-#proof-tree(
+#prooftree(
   rule(
     name: $R$,
     $C_1 or C_2 or C_3$,
@@ -95,7 +95,7 @@ As an example, here is a natural deduction proof tree generated with Curryst:
   #let not-i = rule.with(name: $not_i$)
   #let not-e = rule.with(name: $not_e$)
 
-  #proof-tree(
+  #prooftree(
     impl-i(
       $tack (p -> q) -> not (p and not q)$,
       not-i(
@@ -124,7 +124,7 @@ As an example, here is a natural deduction proof tree generated with Curryst:
 
 ## Advanced usage
 
-The `proof-tree` function accepts multiple named arguments that let you customize the tree:
+The `prooftree` function accepts multiple named arguments that let you customize the tree:
 
 <dl>
   <dt><code>prem-min-spacing</code></dt>

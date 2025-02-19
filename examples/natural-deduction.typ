@@ -1,4 +1,4 @@
-#import "../curryst.typ": rule, proof-tree
+#import "../curryst.typ": rule, prooftree
 #set document(date: none)
 #set page(width: auto, height: auto, margin: 0.5cm, fill: white)
 
@@ -10,7 +10,7 @@
 #let not-i = rule.with(name: $not_i$)
 #let not-e = rule.with(name: $not_e$)
 
-#proof-tree(
+#prooftree(
   impl-i(
     $tack (p -> q) -> not (p and not q)$,
     not-i(
