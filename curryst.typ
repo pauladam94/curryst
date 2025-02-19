@@ -57,10 +57,9 @@
   /// Such a rule can be constructed using the `rule` function.
   rule,
   /// The minimum amount of space between two premises.
-  prem-min-spacing: 15pt,
-  /// The amount width with which to extend the horizontal bar beyond the
-  /// content. Also determines how far from the bar labels and names are
-  /// displayed.
+  min-premise-spacing: 15pt,
+  /// The amount to extend the horizontal bar beyond the content. Also
+  /// determines how far from the bar labels and names are displayed.
   title-inset: 2pt,
   /// The stroke to use for the horizontal bars.
   stroke: stroke(0.4pt),
@@ -69,7 +68,7 @@
   ///
   /// Note that, in this case, "the bar" refers to the bounding box of the
   /// horizontal line and the rule name (if any).
-  horizontal-spacing: 0pt,
+  vertical-spacing: 0pt,
   /// The minimum height of the box containing the horizontal bar.
   ///
   /// The height of this box is normally determined by the height of the rule
@@ -327,7 +326,7 @@
     /// and the name.
     bar-margin,
     /// The spacing above and below the bar.
-    horizontal-spacing,
+    vertical-spacing,
     /// The minimum height of the bar element.
     min-bar-height,
   ) = {
@@ -373,7 +372,7 @@
 
       stack(
         dir: stack-dir,
-        spacing: horizontal-spacing,
+        spacing: vertical-spacing,
         h(premises-left-offset) + premises.content,
         h(bar-left-offset) + bar.content,
         h(conclusion-left-offset) + conclusion,
@@ -411,7 +410,7 @@
     /// and the name.
     bar-margin,
     /// The margin above and below the bar.
-    horizontal-spacing,
+    vertical-spacing,
     /// The minimum height of the bar element.
     min-bar-height,
   ) = {
@@ -451,7 +450,7 @@
           bar-stroke,
           bar-hang,
           bar-margin,
-          horizontal-spacing,
+          vertical-spacing,
           min-bar-height,
         )),
         min-premise-spacing,
@@ -467,7 +466,7 @@
       rule.label,
       rule.name,
       bar-margin,
-      horizontal-spacing,
+      vertical-spacing,
       min-bar-height,
     )
   }
@@ -477,11 +476,11 @@
     let tree = layout-tree(
       rule,
       available.width,
-      prem-min-spacing.to-absolute(),
+      min-premise-spacing.to-absolute(),
       stroke,
       title-inset.to-absolute(),
       title-inset.to-absolute(),
-      horizontal-spacing.to-absolute(),
+      vertical-spacing.to-absolute(),
       min-bar-height.to-absolute(),
     ).content
 

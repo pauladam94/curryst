@@ -127,16 +127,16 @@ As an example, here is a natural deduction proof tree generated with Curryst:
 The `prooftree` function accepts multiple named arguments that let you customize the tree:
 
 <dl>
-  <dt><code>prem-min-spacing</code></dt>
+  <dt><code>min-premise-spacing</code></dt>
   <dd>The minimum amount of space between two premises.</dd>
 
   <dt><code>title-inset</code></dt>
-  <dd>The amount width with which to extend the horizontal bar beyond the content. Also determines how far from the bar labels and names are displayed.</dd>
+  <dd>The amount to extend the horizontal bar beyond the content. Also determines how far from the bar labels and names are displayed.</dd>
 
   <dt><code>stroke</code></dt>
   <dd>The stroke to use for the horizontal bars.</dd>
 
-  <dt><code>horizontal-spacing</code></dt>
+  <dt><code>vertical-spacing</code></dt>
   <dd>The space between the bottom of the bar and the conclusion, and between the top of the bar and the premises.</dd>
 
   <dt><code>min-bar-height</code></dt>

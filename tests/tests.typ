@@ -190,7 +190,7 @@
 #let not-e(ccl, pf, pt) = rule(name: "aaaaaaaa", ccl, pf, pt)
 
 #test(
-  config: (prem-min-spacing: 8pt),
+  config: (min-premise-spacing: 8pt),
   [Conclusion],
   impl-i(
     $tack (p -> q) -> not (p and not q)$,
@@ -226,9 +226,9 @@
 
 #test(
   config: (
-    prem-min-spacing: 2cm,
+    min-premise-spacing: 2cm,
     title-inset: 1cm,
-    horizontal-spacing: 0.2cm,
+    vertical-spacing: 0.2cm,
     min-bar-height: 0.3cm,
   ),
   name: [Name],
@@ -254,9 +254,9 @@
 
 #test(
   config: (
-    prem-min-spacing: 0pt,
+    min-premise-spacing: 0pt,
     title-inset: 0pt,
-    horizontal-spacing: 0pt,
+    vertical-spacing: 0pt,
     min-bar-height: 0pt,
   ),
   name: [Name],
@@ -294,7 +294,7 @@
 #test(
   width: 5cm,
   config: (
-    prem-min-spacing: 1cm
+    min-premise-spacing: 1cm
   ),
   [The conclusion],
   rect(width: 1cm),
@@ -305,7 +305,7 @@
 #test(
   width: 5cm,
   config: (
-    prem-min-spacing: 1cm
+    min-premise-spacing: 1cm
   ),
   [The conclusion is a bit wide],
   rect(width: 1cm),
@@ -316,7 +316,7 @@
 #test(
   width: 5cm,
   config: (
-    prem-min-spacing: 1cm
+    min-premise-spacing: 1cm
   ),
   [The conclusion is hugely wide!!!],
   rect(width: 1cm),
@@ -327,7 +327,7 @@
 #test(
   width: 5cm,
   config: (
-    prem-min-spacing: 1cm,
+    min-premise-spacing: 1cm,
     title-inset: 0pt,
   ),
   [The conclusion],
@@ -339,7 +339,7 @@
 #test(
   width: 8cm,
   config: (
-    prem-min-spacing: 1cm,
+    min-premise-spacing: 1cm,
     title-inset: 0.5cm,
   ),
   name: rect(width: 0.5cm),
@@ -353,7 +353,7 @@
 #test(
   width: 7.9cm,
   config: (
-    prem-min-spacing: 1cm,
+    min-premise-spacing: 1cm,
     title-inset: 0.5cm,
   ),
   name: rect(width: 0.5cm),
