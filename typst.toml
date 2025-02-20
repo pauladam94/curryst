@@ -9,5 +9,5 @@ repository = "https://github.com/pauladam94/curryst"
 keywords = ["proof tree", "prooftree", "inference", "logic"]
 categories = ["components", "visualization", "integration"]
 disciplines = ["computer-science", "mathematics"]
-compiler = "0.11.0"
+compiler = "0.12.0"
 exclude = [".gitignore", "examples/*", "tests/*"]
