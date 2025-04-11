@@ -13,30 +13,11 @@
   /// function, or some content.
   ..premises
 ) = {
-  assert(
-    label == none or type(label) in (str, content, symbol),
-    message: "the label of a rule must be some content",
-  )
-  assert(
-    name == none or type(name) in (str, content, symbol),
-    message: "the name of a rule must be some content",
-  )
-  assert(
-    type(conclusion) in (str, content, symbol),
+  assert.ne(
+    type(conclusion),
+    dictionary,
     message: "the conclusion of a rule must be some content (it cannot be another rule)",
   )
-  for premise in premises.pos() {
-    assert(
-      type(premise) in (str, content, symbol)
-        or (
-          type(premise) == dictionary
-            and "name" in premise
-            and "conclusion" in premise
-            and "premises" in premise
-        ),
-      message: "a premise must be some content or another rule",
-    )
-  }
   assert.eq(
     premises.named().len(),
     0,
