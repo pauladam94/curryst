@@ -4,11 +4,11 @@
 
 Consider the following tree:
 $
-  Pi quad = quad #prooftree(
+  Pi quad = quad prooftree(
     rule(
-      $phi$,
-      $Pi_1$,
-      $Pi_2$,
+      phi,
+      Pi_1,
+      Pi_2,
     )
   )
 $

@@ -8,7 +8,7 @@ A Typst package for typesetting proof trees.
 You can import the latest version of this package with:
 
 ```typst
-#import "@preview/curryst:0.5.0": rule, prooftree
+#import "@preview/curryst:0.5.1": rule, prooftree
 ```
 
 ## Basic usage
@@ -41,11 +41,11 @@ Proof trees can be part of mathematical formulas:
 ```typ
 Consider the following tree:
 $
-  Pi quad = quad #prooftree(
+  Pi quad = quad prooftree(
     rule(
-      $phi$,
-      $Pi_1$,
-      $Pi_2$,
+      phi,
+      Pi_1,
+      Pi_2,
     )
   )
 $
