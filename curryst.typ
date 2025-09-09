@@ -86,107 +86,87 @@
   }
 
 
-  /// Lays out multiple premises, spacing them properly.
+  /// Lays out premises horizontally/vertically with spacing adjustment, auto-wrapping, and center alignment.
   let layout-premises(
-    /// Each laid out premise.
-    ///
-    /// Must be an array of ditionaries with `content`, `left-blank` and
-    /// `right-blank` attributes.
-    premises,
-    /// The minimum amount between each premise.
+    /// Rows of premises to layout. Each row is an array of laid-out premises
+    /// (dictionaries with content, left-blank, right-blank).
+    rows,
+    /// The minimum spacing between premises in a row.
     min-spacing,
-    /// If the laid out premises have an inner width smaller than this, their
-    /// spacing will be increased in order to reach this inner width.
-    optimal-inner-width,
+    /// The optimal width to adjust spacing to. If premises are narrower than this,
+    /// spacing will be increased to match. Typically set to conclusion width.
+    optimal-width: none,
+    /// The maximum width before auto-wrapping. If a row exceeds this width,
+    /// it will be split into multiple rows.
+    max-width: none,
   ) = {
-    let arity = premises.len()
-
-    if arity == 0 {
-      return layout-content(none)
-    }
-
-    if arity == 1 {
-      return premises.at(0)
-    }
-
-    let left-blank = premises.at(0).left-blank
-    let right-blank = premises.at(-1).right-blank
-
-    let initial-content = stack(
+    if rows.len() == 0 { return layout-content(none) }
+    
+    // Helper: Extract content from premises
+    let extract-contents = row => row.map(premise => premise.content)
+    
+    // Helper: Make horizontal stack with spacing
+    let make-stack = (contents, spacing) => stack(
       dir: ltr,
-      spacing: min-spacing,
-      ..premises.map(premise => premise.content),
+      spacing: spacing,
+      ..contents,
     )
-    let initial-inner-width = measure(initial-content).width - left-blank - right-blank
-
-    if initial-inner-width >= optimal-inner-width {
-      return (
-        content: box(initial-content),
-        left-blank: left-blank,
-        right-blank: right-blank,
-      )
-    }
-
-    // Conclusion is wider than the premises: they need to be spaced out.
-    let remaining-space = optimal-inner-width - initial-inner-width
-    let final-content = stack(
-      dir: ltr,
-      spacing: min-spacing + remaining-space / (arity + 1),
-      ..premises.map(premise => premise.content),
-    )
-
-    (
-      content: box(final-content),
-      left-blank: left-blank,
-      right-blank: right-blank,
-    )
-  }
-
-
-  /// Lays out multiple leaf premises, onto multiple lines to respect the
-  /// available horizontal space.
-  ///
-  /// This function is meant to be called when we already know the premises
-  /// should be typeset onto multiple lines. In particular, if there is enough
-  /// space to fit all the premises, they will not be spaced apart.
-  let layout-leaf-premises(
-    /// Each laid out premise.
-    ///
-    /// Must be an array of content-like (meaning `content`, `string`, etc.).
-    premises,
-    /// The minimum amount between each premise.
-    min-spacing,
-    /// The available width for the returned content.
-    ///
-    /// Ideally, the width of the returned content should be bounded by this
-    /// value, although no guarantee is made.
-    available-width,
-  ) = {
-    let line-builder = stack.with(
-      dir: ltr,
-      spacing: min-spacing,
-    )
-
-    let lines = ((),)
-    for premise in premises {
-      let augmented-line = lines.last() + (premise,)
-      if measure(line-builder(..augmented-line)).width <= available-width {
-        lines.last() = augmented-line
-      } else {
-        lines.push((premise,))
+    
+    // Helper: Calculate row width
+    let row-width = row => measure(make-stack(extract-contents(row), min-spacing)).width
+    
+    // Helper: Wrap single row if too wide
+    let wrap-row = row => {
+      if max-width == none or row-width(row) <= max-width { return (row,) }
+      
+      let wrapped = ((),)
+      for item in row {
+        let candidate = wrapped.last() + (item,)
+        if wrapped.last().len() == 0 or row-width(candidate) <= max-width {
+          wrapped.last() = candidate
+        } else {
+          wrapped.push((item,))
+        }
       }
+      wrapped.filter(r => r.len() > 0)
     }
-
-    layout-content({
-      set align(center)
-      stack(
-        dir: ttb,
-        spacing: 0.7em,
-        ..lines
-          .filter(line => line.len() != 0)
-          .map(line => line-builder(..line)),
-      )
-    })
+    
+    // Apply auto-wrap to all rows
+    let wrapped-rows = ()
+    for row in rows {
+      wrapped-rows += wrap-row(row)
+    }
+    let final-rows = wrapped-rows
+    
+    // Single row: apply optimal spacing
+    if final-rows.len() == 1 {
+      let row = final-rows.at(0)
+      let contents = extract-contents(row)
+      let (left-blank, right-blank) = (row.at(0).left-blank, row.last().right-blank)
+      
+      // Calculate spacing adjustment
+      let base-content = make-stack(contents, min-spacing)
+      let inner-width = measure(base-content).width - left-blank - right-blank
+      let spacing = if optimal-width != none and inner-width < optimal-width {
+        min-spacing + (optimal-width - inner-width) / (row.len() + 1)
+      } else {
+        min-spacing
+      }
+      
+      let content = make-stack(contents, spacing)
+      (content: box(content), left-blank: left-blank, right-blank: right-blank)
+    } else {
+      // Multiple rows: stack vertically with center alignment
+      let content = {
+        set align(center)
+        stack(
+          dir: ttb, 
+          spacing: 0.7em, 
+          ..final-rows.map(row => make-stack(extract-contents(row), min-spacing))
+        )
+      }
+      (content: box(content), left-blank: 0pt, right-blank: 0pt)
+    }
   }
 
 
@@ -397,42 +377,41 @@
       )
     }
 
-    let side-to-side-premises = layout-premises(
-      rule.premises.map(premise => layout-tree(
-        premise,
-        none,
-        min-premise-spacing,
-        bar-stroke,
-        bar-hang,
-        bar-margin,
-        vertical-spacing,
-        min-bar-height,
-      )),
+    // Split premises by linebreaks and layout each premise
+    let (rows, current) = ((), ())
+    for premise in rule.premises {
+      if type(premise) == dictionary and premise.at("type", default: none) == "linebreak" {
+        if current.len() > 0 {
+          rows.push(current)
+          current = ()
+        }
+      } else {
+        current.push(layout-tree(
+          premise, none, min-premise-spacing, bar-stroke,
+          bar-hang, bar-margin, vertical-spacing, min-bar-height,
+        ))
+      }
+    }
+    if current.len() > 0 { rows.push(current) }
+    
+    // Calculate constraints for layout-premises
+    let conclusion-width = measure(rule.conclusion).width
+    let max-width = none
+    if available-width != none {
+      let used-width = bar-hang * 2
+      if rule.name != none { used-width += bar-margin + measure(rule.name).width }
+      if rule.label != none { used-width += bar-margin + measure(rule.label).width }
+      max-width = available-width - used-width
+    }
+    
+    // Let layout-premises handle everything: linebreaks, spacing, and auto-wrap
+    let premises-layout = layout-premises(
+      rows,
       min-premise-spacing,
-      measure(rule.conclusion).width,
+      optimal-width: conclusion-width,
+      max-width: max-width,
     )
-    let result = layout-with-baked-premises(side-to-side-premises)
-
-    let premises-are-all-leaves = rule.premises.all(premise => type(premise) != dictionary)
-    if available-width == none or measure(result.content).width <= available-width or not premises-are-all-leaves {
-      return result
-    }
-
-    // If the premises are all leaves, they can be typeset in multiple lines
-    // when there is not enough horizontal space.
-    let used-width = bar-hang * 2
-    if rule.name != none {
-      used-width += bar-margin + measure(rule.name).width
-    }
-    if rule.label != none {
-      used-width += bar-margin + measure(rule.label).width
-    }
-    let stacked-premises = layout-leaf-premises(
-      rule.premises,
-      min-premise-spacing,
-      available-width - used-width,
-    )
-    layout-with-baked-premises(stacked-premises)
+    layout-with-baked-premises(premises-layout)
   }
 
 
@@ -456,3 +435,7 @@
     )
   })
 }
+
+/// A linebreak marker for premise layout.
+/// Use this to create a new line when laying out premises.
+#let br = (type: "linebreak")
