@@ -1,4 +1,4 @@
-#import "../curryst.typ" : rule, prooftree
+#import "../curryst.typ" : rule, prooftree, br
 #set document(date: none)
 #set page(margin: 0.5cm, width: auto, height: auto)
 
@@ -279,6 +279,12 @@
   ),
 )
 
+#test(
+  name: [T-LET],
+  [$Sigma;Gamma tack "let" x=t "in" t_"body" : sigma_"body"$], 
+  [$Delta;Sigma tack t:sigma$], [$not exists tau^prime. Gamma(x)=tau^prime$], br,
+  [$Gamma;Sigma,(x:sigma) tack t_"body":sigma_"body"$],
+)
 
 // Test leafs are shown on multiple lines when appropriate.
 
