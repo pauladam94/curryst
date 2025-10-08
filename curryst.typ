@@ -38,12 +38,12 @@
   /// Such a rule can be constructed using the `rule` function.
   rule,
   /// The minimum amount of space between two premises.
-  min-premise-spacing: 15pt,
+  min-premise-spacing: 1.5em,
   /// The amount to extend the horizontal bar beyond the content. Also
   /// determines how far from the bar labels and names are displayed.
-  title-inset: 2pt,
+  title-inset: 0.2em,
   /// The stroke to use for the horizontal bars.
-  stroke: stroke(0.4pt),
+  stroke: stroke(0.05em),
   /// The space between the bottom of the bar and the conclusion, and between
   /// the top of the bar and the premises.
   ///
