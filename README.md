@@ -8,7 +8,7 @@ A Typst package for typesetting proof trees.
 You can import the latest version of this package with:
 
 ```typst
-#import "@preview/curryst:0.5.1": rule, prooftree
+#import "@preview/curryst:0.6.0": rule, prooftree
 ```
 
 ## Basic usage
@@ -147,3 +147,34 @@ The `prooftree` function accepts multiple named arguments that let you customize
 </dl>
 
 For more information, please refer to the documentation in [`curryst.typ`](curryst.typ).
+
+## Layout Multiple Rules (a simple way)
+
+Here we show a way to typeset multiple rules at one time :
+
+![8 rules rendered together.](examples/ruleset.svg)
+<details>
+  <summary>Show code</summary>
+
+  ```typ
+  #let tree = prooftree(rule(
+    label: [Label],
+    name: [Rule name],
+    [Conclusion],
+    [Premise 1],
+    [Premise 2],
+    [Premise 3],
+  ))
+  #let ax = prooftree(rule(
+    label: [Axiome],
+    $Gamma tack A or not A$,
+  ))
+  #let rule-set(..rules, spacing: 3em) = {
+    block(rules.pos().map(box).join(h(spacing, weak: true)))
+  }
+  #align(center, rule-set(tree, ax, tree, tree, ax, ax, ax, ax))
+  ```
+</details>
+
+
+This function is not available in the package because they are a lot more ways to typeset multiple rules.

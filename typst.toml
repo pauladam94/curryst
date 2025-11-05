@@ -1,6 +1,6 @@
 [package]
 name = "curryst"
-version = "0.5.1"
+version = "0.6.0"
 entrypoint = "curryst.typ"
 authors = ["Rémi Hutin <@remih23>", "Paul Adam <@pauladam94>", "Malo <@MDLC01>"]
 license = "MIT"
