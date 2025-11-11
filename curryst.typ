@@ -39,6 +39,8 @@
   rule,
   /// The minimum amount of space between two premises.
   min-premise-spacing: 1.5em,
+  /// The spacing between the premise lines
+  vertical-premise-spacing: 0.7em,
   /// The amount to extend the horizontal bar beyond the content. Also
   /// determines how far from the bar labels and names are displayed.
   title-inset: 0.2em,
@@ -156,6 +158,8 @@
     premises,
     /// The minimum amount between each premise.
     min-spacing,
+    /// The amount of space between the premise lines
+    vertical-spacing,
     /// The available width for the returned content.
     ///
     /// Ideally, the width of the returned content should be bounded by this
@@ -181,7 +185,7 @@
       set align(center)
       stack(
         dir: ttb,
-        spacing: 0.7em,
+        spacing: vertical-spacing,
         ..lines
           .filter(line => line.len() != 0)
           .map(line => line-builder(..line)),
@@ -367,6 +371,8 @@
     available-width,
     /// The minimum amount between each premise.
     min-premise-spacing,
+    /// The spacing between the premise lines
+    vertical-premise-spacing,
     /// The stroke of the bar.
     bar-stroke,
     /// The amount by which to extend the bar on each side.
@@ -402,6 +408,7 @@
         premise,
         none,
         min-premise-spacing,
+        vertical-premise-spacing,
         bar-stroke,
         bar-hang,
         bar-margin,
@@ -430,6 +437,7 @@
     let stacked-premises = layout-leaf-premises(
       rule.premises,
       min-premise-spacing,
+      vertical-premise-spacing,
       available-width - used-width,
     )
     layout-with-baked-premises(stacked-premises)
@@ -441,6 +449,7 @@
       rule,
       available.width,
       min-premise-spacing.to-absolute(),
+      vertical-premise-spacing.to-absolute(),
       stroke,
       title-inset.to-absolute(),
       title-inset.to-absolute(),
