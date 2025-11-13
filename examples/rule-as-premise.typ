@@ -1,4 +1,4 @@
-#import "../curryst.typ": rule, prooftree
+#import "../curryst.typ": prooftree, rule
 #set document(date: none)
 #set page(width: auto, height: auto, margin: 0.5cm, fill: white)
 
@@ -18,5 +18,5 @@
       $C_2 or overline(L)$,
     ),
     $C_1 or C_2 or C_3$,
-  )
+  ),
 )
