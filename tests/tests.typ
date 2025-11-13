@@ -1,4 +1,4 @@
-#import "../curryst.typ" : rule, prooftree
+#import "../curryst.typ": prooftree, rule
 #set document(date: none)
 #set page(margin: 0.5cm, width: auto, height: auto)
 
@@ -8,221 +8,206 @@
     block(
       stroke: 0.3pt + red,
       width: width,
-      prooftree(dir: dir, rule(..args), ..config)
+      prooftree(dir: dir, rule(..args), ..config),
     )
   }
 }
 
-
 #test(
   [Conclusion],
 )
-
 
 #test(
   name: [Axiom],
   [Conclusion],
 )
-
 
 #test(
   label: [Label],
   name: [Axiom],
   [Conclusion],
 )
-
 
 #test(
   label: [Label],
   name: [Name],
-  [Long conclusion],
   [Premise],
+  [Long conclusion],
 )
-
 
 #test(
   label: [Label],
   name: [Name],
-  [Conclusion],
   [Long premise],
+  [Conclusion],
 )
-
 
 #test(
   label: [Label],
   name: [Name],
-  [Conclusion],
   [Premise 1],
   [Premise 2],
+  [Conclusion],
 )
-
 
 #test(
   label: [Label],
   name: [Name],
-  [Very long conclusion],
   [Prem. 1],
   [Prem. 2],
+  [Very long conclusion],
 )
-
 
 #test(
   label: [Label],
   name: [Name],
-  [Very long conclusion],
   rule(
-    [Prem. 1],
     [Hypothesis 1],
+    [Prem. 1],
   ),
   [Prem. 2],
+  [Very long conclusion],
 )
-
 
 #test(
   label: [Label],
   name: [Name],
-  [Very long conclusion],
   rule(
     label: [Other label],
     name: [Other name],
-    [Prem. 1],
     [Hypothesis 1],
+    [Prem. 1],
   ),
   [Prem. 2],
+  [Very long conclusion],
 )
-
 
 #test(
   name: [Name],
-  [Very long conclusion],
   rule(
-    [Prem. 1],
     [Hypothesis 1],
+    [Prem. 1],
   ),
   rule(
     name: [Other name],
-    [Prem. 2],
     [Hypothesis 2],
+    [Prem. 2],
   ),
+  [Very long conclusion],
 )
-
 
 #let ax(ccl) = rule(name: [ax], ccl)
-#let and-el(ccl, p) = rule(name: $and_e^l$, ccl, p)
-#let and-er(ccl, p) = rule(name: $and_e^r$, ccl, p)
-#let impl-i(ccl, p) = rule(name: $attach(->, br: i)$, ccl, p)
-#let impl-e(ccl, pi, p1) = rule(name: $attach(->, br: e)$, ccl, pi, p1)
-#let not-i(ccl, p) = rule(name: $not_i$, ccl, p)
-#let not-e(ccl, pf, pt) = rule(name: $not_e$, ccl, pf, pt)
+#let and-el(p, ccl) = rule(name: $and_e^l$, p, ccl)
+#let and-er(p, ccl) = rule(name: $and_e^r$, p, ccl)
+#let impl-i(p, ccl) = rule(name: $attach(->, br: i)$, p, ccl)
+#let impl-e(pi, p1, ccl) = rule(name: $attach(->, br: e)$, pi, p1, ccl)
+#let not-i(p, ccl) = rule(name: $not_i$, p, ccl)
+#let not-e(pf, pt, ccl) = rule(name: $not_e$, pf, pt, ccl)
 
 #test(
-  [Conclusion],
   impl-i(
-    $tack (p -> q) -> not (p and not q)$,
     not-i(
-      $p -> q tack  not (p and not q)$,
       not-e(
-        $p -> q, p and not q tack bot$,
         impl-e(
-          $Gamma tack q$,
           ax($Gamma tack p -> q$),
           and-el(
-            $Gamma tack p$,
             ax($Gamma tack p and not q$),
+            $Gamma tack p$,
           ),
+          $Gamma tack q$,
         ),
         and-er(
-          $Gamma tack not q$,
           ax($Gamma tack p and not q$),
+          $Gamma tack not q$,
         ),
+        $p -> q, p and not q tack bot$,
       ),
+      $p -> q tack not (p and not q)$,
     ),
+    $tack (p -> q) -> not (p and not q)$,
   ),
+  [Conclusion],
 )
 
-
 #test(
+  [Premise],
+  [Premise],
+  [Premise],
   [This is a very wide conclusion, wider than all premises combined],
-  [Premise],
-  [Premise],
-  [Premise],
 )
 
 #test(
-  [Conclusion],
   rule(
-    [Premise],
     [Short],
+    [Premise],
   ),
   rule(
-    [Premise],
     [Short],
+    [Premise],
   ),
   rule(
-    [Premise],
     [Very long premise to a premise in a tree],
+    [Premise],
   ),
+  [Conclusion],
 )
 
 #test(
-  [Conclusion],
   rule(
-    [Premise],
     [Very long premise to a premise in a tree],
+    [Premise],
   ),
   rule(
-    [Premise],
     [Short],
+    [Premise],
   ),
   rule(
-    [Premise],
     [Short],
+    [Premise],
   ),
+  [Conclusion],
 )
-
 
 #let ax(ccl) = rule(name: "aaaaaaaa", ccl)
-#let and-el(ccl, p) = rule(name: "aaaaaaaaaaaaaaaaaaaaaaaa", ccl, p)
-#let and-er(ccl, p) = rule(name: "aaaaaaaa", ccl, p)
-#let impl-i(ccl, p) = rule(name: "aaaaaaaa", ccl, p)
-#let impl-e(ccl, pi, p1) = rule(name: "aaaaaaaaaaaaaaaaa", ccl, pi, p1)
-#let not-i(ccl, p) = rule(name: "aaaaaaaa", ccl, p)
-#let not-e(ccl, pf, pt) = rule(name: "aaaaaaaa", ccl, pf, pt)
+#let and-el(p, ccl) = rule(name: "aaaaaaaaaaaaaaaaaaaaaaaa", p, ccl)
+#let and-er(p, ccl) = rule(name: "aaaaaaaa", p, ccl)
+#let impl-i(p, ccl) = rule(name: "aaaaaaaa", p, ccl)
+#let impl-e(pi, p1, ccl) = rule(name: "aaaaaaaaaaaaaaaaa", pi, p1, ccl)
+#let not-i(p, ccl) = rule(name: "aaaaaaaa", p, ccl)
+#let not-e(pf, pt, ccl) = rule(name: "aaaaaaaa", pf, pt, ccl)
 
 #test(
   config: (min-premise-spacing: 8pt),
-  [Conclusion],
   impl-i(
-    $tack (p -> q) -> not (p and not q)$,
     not-i(
-      $p -> q tack  not (p and not q)$,
       not-e(
-        $p -> q, p and not q tack bot$,
         impl-e(
-          $Gamma tack q$,
           ax($Gamma tack p -> q$),
           and-el(
-            $Gamma tack p$,
             ax($Gamma tack p and not q$),
+            $Gamma tack p$,
           ),
+          $Gamma tack q$,
         ),
         and-er(
-          $Gamma tack not q$,
           ax($Gamma tack p and not q$),
+          $Gamma tack not q$,
         ),
+        $p -> q, p and not q tack bot$,
       ),
+      $p -> q tack not (p and not q)$,
     ),
+    $tack (p -> q) -> not (p and not q)$,
   ),
+  [Conclusion],
 )
-
 
 #test(
   config: (stroke: stroke(paint: blue, thickness: 2pt, cap: "round", dash: "dashed")),
   name: [Name],
-  [Conclusion],
   [Premise],
+  [Conclusion],
 )
-
 
 #test(
   config: (
@@ -232,25 +217,24 @@
     min-bar-height: 0.3cm,
   ),
   name: [Name],
-  [Conclusion],
   rule(
     label: [Label 1],
-    [Premise 1],
     [Hypothesis 1],
+    [Premise 1],
   ),
   rule(
     name: [Name 2],
-    [Premise 2],
     [Hypothesis 2],
+    [Premise 2],
   ),
   rule(
     label: [Label 3],
     name: [Name 3],
-    [Premise 3],
     [Hypothesis 3],
+    [Premise 3],
   ),
+  [Conclusion],
 )
-
 
 #test(
   config: (
@@ -260,68 +244,67 @@
     min-bar-height: 0pt,
   ),
   name: [Name],
-  [Conclusion],
   rule(
     label: [Label 1],
-    [Premise 1],
     [Hypothesis 1],
+    [Premise 1],
   ),
   rule(
     name: [Name 2],
-    [Premise 2],
     [Hypothesis 2],
+    [Premise 2],
   ),
   rule(
     label: [Label 3],
     name: [Name 3],
-    [Premise 3],
     [Hypothesis 3],
+    [Premise 3],
   ),
+  [Conclusion],
 )
-
 
 // Test leafs are shown on multiple lines when appropriate.
 
 #test(
   width: 5cm,
   name: $or_e$,
-  $Gamma tack psi$,
   $Gamma tack phi_1 or phi_2$,
   $Gamma, phi_1 tack psi$,
   $Gamma, phi_2 tack psi$,
+  $Gamma tack psi$,
 )
 
 #test(
   width: 5cm,
   config: (
-    min-premise-spacing: 1cm
+    min-premise-spacing: 1cm,
   ),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
   [The conclusion],
-  rect(width: 1cm),
-  rect(width: 1cm),
-  rect(width: 1cm),
 )
 
 #test(
   width: 5cm,
   config: (
-    min-premise-spacing: 1cm
+    min-premise-spacing: 1cm,
   ),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
   [The conclusion is a bit wide],
-  rect(width: 1cm),
-  rect(width: 1cm),
-  rect(width: 1cm),
 )
 
 #test(
   width: 5cm,
   config: (
-    min-premise-spacing: 1cm
+    min-premise-spacing: 1cm,
   ),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
   [The conclusion is hugely wide!!!],
-  rect(width: 1cm),
-  rect(width: 1cm),
-  rect(width: 1cm),
 )
 
 #test(
@@ -330,10 +313,10 @@
     min-premise-spacing: 1cm,
     title-inset: 0pt,
   ),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
   [The conclusion],
-  rect(width: 1cm),
-  rect(width: 1cm),
-  rect(width: 1cm),
 )
 
 #test(
@@ -344,10 +327,10 @@
   ),
   name: rect(width: 0.5cm),
   label: rect(width: 0.5cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
   [The conclusion],
-  rect(width: 1cm),
-  rect(width: 1cm),
-  rect(width: 1cm),
 )
 
 #test(
@@ -358,10 +341,10 @@
   ),
   name: rect(width: 0.5cm),
   label: rect(width: 0.5cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
   [The conclusion],
-  rect(width: 1cm),
-  rect(width: 1cm),
-  rect(width: 1cm),
 )
 
 #{
@@ -373,49 +356,47 @@
   set text(font: "Libertinus Serif")
   test(
     name: [......................],
+    [................],
+    [................],
     [...],
-    [................],
-    [................],
   )
 }
 
-
 #test(
-  [This is a very wide conclusion, wider than all premises combined],
   [Premise],
   [Another premise.],
+  [This is a very wide conclusion, wider than all premises combined],
 )
 
 #test(
-  [This is a very wide conclusion, wider than all premises combined],
   rule(
+    [Very, very wide hypothesis...],
     [Premise],
-    [Very, very wide hypothesis...]
   ),
   [Another premise.],
-)
-
-#test(
   [This is a very wide conclusion, wider than all premises combined],
-  rule(
-    [Premise],
-    [Hyyyyyyyyyyyyyyyyyyypothesis]
-  ),
-  rule(
-    [Premise],
-    [Hyyyyyyyyyyyyyyyyyyypothesis as well]
-  ),
 )
 
+#test(
+  rule(
+    [Hyyyyyyyyyyyyyyyyyyypothesis],
+    [Premise],
+  ),
+  rule(
+    [Hyyyyyyyyyyyyyyyyyyypothesis as well],
+    [Premise],
+  ),
+  [This is a very wide conclusion, wider than all premises combined],
+)
 
 #test(
+  rule(
+    [Hyyyyyyyyyyyyyyyyyyypothesis],
+    [Premise],
+  ),
+  rule(
+    [Hyyyyyyyyyyyyyyyyyyypothesis as well],
+    [Premise],
+  ),
   [This is a wide conclusion, but not the widest],
-  rule(
-    [Premise],
-    [Hyyyyyyyyyyyyyyyyyyypothesis]
-  ),
-  rule(
-    [Premise],
-    [Hyyyyyyyyyyyyyyyyyyypothesis as well]
-  ),
 )

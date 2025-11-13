@@ -7,19 +7,21 @@
   label: none,
   /// The name of the rule, displayed on the right of the horizontal bar.
   name: none,
-  /// The conclusion of the rule.
-  conclusion,
-  /// The premises of the rule. Might be other rules constructed with this
-  /// function, or some content.
-  ..premises
+  /// - Elements except the last : premises of the rule. Might be other
+  ///   rules constructed with this function, or some content.
+  /// - Last element : the conclusion of the rule
+  ..elems,
 ) = {
+  let args = elems.pos()
+  let conclusion = args.at(args.len() - 1)
+  let premises = args.slice(0, args.len() - 1)
   assert.ne(
     type(conclusion),
     dictionary,
     message: "the conclusion of a rule must be some content (it cannot be another rule)",
   )
   assert.eq(
-    premises.named().len(),
+    elems.named().len(),
     0,
     message: "unexpected named arguments to `rule`",
   )
@@ -27,7 +29,7 @@
     label: label,
     name: name,
     conclusion: conclusion,
-    premises: premises.pos()
+    premises: premises,
   )
 }
 
@@ -85,7 +87,6 @@
     )
   }
 
-
   /// Lays out multiple premises, spacing them properly.
   let layout-premises(
     /// Each laid out premise.
@@ -117,7 +118,9 @@
       spacing: min-spacing,
       ..premises.map(premise => premise.content),
     )
-    let initial-inner-width = measure(initial-content).width - left-blank - right-blank
+    let initial-inner-width = (
+      measure(initial-content).width - left-blank - right-blank
+    )
 
     if initial-inner-width >= optimal-inner-width {
       return (
@@ -182,9 +185,7 @@
       stack(
         dir: ttb,
         spacing: 0.7em,
-        ..lines
-          .filter(line => line.len() != 0)
-          .map(line => line-builder(..line)),
+        ..lines.filter(line => line.len() != 0).map(line => line-builder(..line)),
       )
     })
   }
@@ -250,18 +251,16 @@
 
     (
       content: content,
-      left-blank:
-        if label == none {
-          hang
-        } else {
-          hang + margin + label-width
-        },
-      right-blank:
-        if name == none {
-          hang
-        } else {
-          hang + margin + name-width
-        },
+      left-blank: if label == none {
+        hang
+      } else {
+        hang + margin + label-width
+      },
+      right-blank: if name == none {
+        hang
+      } else {
+        hang + margin + name-width
+      },
     )
   }
 
@@ -299,12 +298,22 @@
     // fractional units later.
     conclusion = box(conclusion, ..measure(conclusion))
 
-    let premises-inner-width = measure(premises.content).width - premises.left-blank - premises.right-blank
+    let premises-inner-width = (
+      measure(premises.content).width - premises.left-blank - premises.right-blank
+    )
     let conclusion-width = measure(conclusion).width
 
     let bar-length = calc.max(premises-inner-width, conclusion-width)
 
-    let bar = layout-bar(bar-stroke, bar-length, bar-hang, label, name, bar-margin, min-bar-height)
+    let bar = layout-bar(
+      bar-stroke,
+      bar-length,
+      bar-hang,
+      label,
+      name,
+      bar-margin,
+      min-bar-height,
+    )
 
     let left-start
     let right-start
@@ -316,13 +325,21 @@
       left-start = calc.max(premises.left-blank, bar.left-blank)
       right-start = calc.max(premises.right-blank, bar.right-blank)
       premises-left-offset = left-start - premises.left-blank
-      conclusion-left-offset = left-start + (premises-inner-width - conclusion-width) / 2
+      conclusion-left-offset = (
+        left-start + (premises-inner-width - conclusion-width) / 2
+      )
     } else {
-      let premises-left-hang = premises.left-blank - (bar-length - premises-inner-width) / 2
-      let premises-right-hang = premises.right-blank - (bar-length - premises-inner-width) / 2
+      let premises-left-hang = (
+        premises.left-blank - (bar-length - premises-inner-width) / 2
+      )
+      let premises-right-hang = (
+        premises.right-blank - (bar-length - premises-inner-width) / 2
+      )
       left-start = calc.max(premises-left-hang, bar.left-blank)
       right-start = calc.max(premises-right-hang, bar.right-blank)
-      premises-left-offset = left-start + (bar-length - premises-inner-width) / 2 - premises.left-blank
+      premises-left-offset = (
+        left-start + (bar-length - premises-inner-width) / 2 - premises.left-blank
+      )
       conclusion-left-offset = left-start
     }
     let bar-left-offset = left-start - bar.left-blank
@@ -413,8 +430,12 @@
     )
     let result = layout-with-baked-premises(side-to-side-premises)
 
-    let premises-are-all-leaves = rule.premises.all(premise => type(premise) != dictionary)
-    if available-width == none or measure(result.content).width <= available-width or not premises-are-all-leaves {
+    let premises-are-all-leaves = rule.premises.all(premise => (
+      type(premise) != dictionary
+    ))
+    if (
+      available-width == none or measure(result.content).width <= available-width or not premises-are-all-leaves
+    ) {
       return result
     }
 
@@ -456,3 +477,19 @@
     )
   })
 }
+
+/// Very Simple function to typeset a set of rules.
+/// 
+/// This function is basic and actually typeset a set of any content in a flex
+/// way that spans multiple lines.
+#let rule-set(
+  /// Horizontal spacing between rules in one line.
+  column-gutter: 3em,
+  /// Vertical spacing between consecutives lines of rules.
+  row-gutter: 2em,
+  ..rules
+) = {
+  set par(leading: row-gutter)
+  block(rules.pos().map(box).join(h(column-gutter, weak: true)))
+}
+

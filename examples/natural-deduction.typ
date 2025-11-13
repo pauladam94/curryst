@@ -12,24 +12,24 @@
 
 #prooftree(
   impl-i(
-    $tack (p -> q) -> not (p and not q)$,
     not-i(
-      $p -> q tack  not (p and not q)$,
       not-e(
-        $ underbrace(p -> q\, p and not q, Gamma) tack bot $,
         impl-e(
-          $Gamma tack q$,
           ax($Gamma tack p -> q$),
           and-el(
-            $Gamma tack p$,
             ax($Gamma tack p and not q$),
+            $Gamma tack p$,
           ),
+          $Gamma tack q$,
         ),
         and-er(
-          $Gamma tack not q$,
           ax($Gamma tack p and not q$),
+          $Gamma tack not q$,
         ),
+        $ underbrace(p -> q\, p and not q, Gamma) tack bot $,
       ),
+      $p -> q tack  not (p and not q)$,
     ),
+    $tack (p -> q) -> not (p and not q)$,
   )
 )

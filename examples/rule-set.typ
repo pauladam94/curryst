@@ -1,20 +1,47 @@
-#import "../curryst.typ": rule, prooftree
+#import "../curryst.typ": prooftree, rule, rule-set
 #set document(date: none)
 #set page(width: 500pt, height: auto, margin: 0.5cm, fill: white)
 
-#let tree = prooftree(rule(
-  label: [Label],
-  name: [Rule name],
-  [Conclusion],
-  [Premise 1],
-  [Premise 2],
-  [Premise 3],
+#let variable = prooftree(rule(
+  name: [Variable],
+  $Gamma, x : A tack x : A$,
 ))
-#let ax = prooftree(rule(
-  label: [Axiome],
-  $Gamma tack A or not A$,
+#let abstraction = prooftree(rule(
+  name: [Abstraction],
+  $Gamma, x: A tack P : B$,
+  $Gamma tack lambda x . P : A => B$,
 ))
-#let rule-set(..rules, spacing: 3em) = {
-  block(rules.pos().map(box).join(h(spacing, weak: true)))
-}
-#align(center, rule-set(tree, ax, tree, tree, ax, ax, ax, ax))
+
+#let application = prooftree(rule(
+  name: [Application],
+  $Gamma tack P : A => B$,
+  $Delta tack Q : B$,
+  $Gamma, Delta tack P Q : B$,
+))
+
+#let weakening = prooftree(rule(
+  name: [Weakening],
+  $Gamma tack P : B$,
+  $Gamma, x : A tack P : B$,
+))
+
+#let contraction = prooftree(rule(
+  label: [Contraction],
+  $Gamma, x : A, y : A tack P : B$,
+  $Gamma, z : A tack P[x, y <- z]: B$,
+))
+
+#let exchange = prooftree(rule(
+  label: [Exchange],
+  $Gamma, x : A, y: B, Delta tack P : B$,
+  $Gamma, y : B, x: A, Delta tack P : B$,
+))
+
+#align(center, rule-set(
+  variable,
+  abstraction,
+  application,
+  weakening,
+  contraction,
+  exchange
+))
