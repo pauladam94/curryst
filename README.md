@@ -204,4 +204,15 @@ Here we show a way to typeset multiple rules at one time :
 </details>
 
 
-This function is not available in the package because they are a lot more ways to typeset multiple rules.
+The function `rule-set` is very simple and is implemented this way :
+
+```typ
+#let rule-set(column-gutter: 3em, row-gutter: 2em, ..rules) = {
+  set par(leading: row-gutter)
+  block(rules.pos().map(box).join(h(column-gutter, weak: true)))
+}
+```
+
+To have more complex layout you can modify this piece of code at your linking.
+However the `curryst` package is not meant right now for layout of arbritary content
+and other packages do it better for more fine grained customization.
