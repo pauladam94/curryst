@@ -1,3 +1,4 @@
+
 # Curryst
 
 A Typst package for typesetting proof trees.
@@ -19,10 +20,10 @@ To display a proof tree, you first need to create a tree, using the `rule` funct
 #let tree = rule(
   label: [Label],
   name: [Rule name],
+  [Conclusion],
   [Premise 1],
   [Premise 2],
   [Premise 3]
-  [Conclusion],
 )
 ```
 
@@ -43,9 +44,9 @@ Consider the following tree:
 $
   Pi quad = quad prooftree(
     rule(
+      phi,
       Pi_1,
       Pi_2,
-      phi,
     )
   )
 $
@@ -60,19 +61,19 @@ You can specify a rule as the premises of a rule in order to create a tree:
 #prooftree(
   rule(
     name: $R$,
+    $C_1 or C_2 or C_3$,
     rule(
       name: $A$,
-      rule(
-        $Pi_1$,
-        $C_1 or L$,
-      ),
       $C_1 or C_2 or L$,
+      rule(
+        $C_1 or L$,
+        $Pi_1$,
+      ),
     ),
     rule(
-      $Pi_2$,
       $C_2 or overline(L)$,
+      $Pi_2$,
     ),
-    $C_1 or C_2 or C_3$,
   )
 )
 ```
@@ -87,54 +88,94 @@ As an example, here is a natural deduction proof tree generated with Curryst:
   <summary>Show code</summary>
 
   ```typ
-  // We import 'rule-set' as well a 'prooftree' and 'rule'
-  #import "../curryst.typ": prooftree, rule, rule-set
-  #let variable = prooftree(rule(
-    name: [Variable],
-    $Gamma, x : A tack x : A$,
-  ))
-  #let abstraction = prooftree(rule(
-    name: [Abstraction],
-    $Gamma, x: A tack P : B$,
-    $Gamma tack lambda x . P : A => B$,
-  ))
+  #let ax = rule.with(name: [ax])
+  #let and-el = rule.with(name: $and_e^ell$)
+  #let and-er = rule.with(name: $and_e^r$)
+  #let impl-i = rule.with(name: $scripts(->)_i$)
+  #let impl-e = rule.with(name: $scripts(->)_e$)
+  #let not-i = rule.with(name: $not_i$)
+  #let not-e = rule.with(name: $not_e$)
 
-  #let application = prooftree(rule(
-    name: [Application],
-    $Gamma tack P : A => B$,
-    $Delta tack Q : B$,
-    $Gamma, Delta tack P Q : B$,
-  ))
+  #prooftree(
+    impl-i(
+      $tack (p -> q) -> not (p and not q)$,
+      not-i(
+        $p -> q tack  not (p and not q)$,
+        not-e(
+          $ underbrace(p -> q\, p and not q, Gamma) tack bot $,
+          impl-e(
+            $Gamma tack q$,
+            ax($Gamma tack p -> q$),
+            and-el(
+              $Gamma tack p$,
+              ax($Gamma tack p and not q$),
+            ),
+          ),
+          and-er(
+            $Gamma tack not q$,
+            ax($Gamma tack p and not q$),
+          ),
+        ),
+      ),
+    )
+  )
+  ```
+</details>
 
-  #let weakening = prooftree(rule(
-    name: [Weakening],
-    $Gamma tack P : B$,
-    $Gamma, x : A tack P : B$,
-  ))
 
-  #let contraction = prooftree(rule(
-    label: [Contraction],
-    $Gamma, x : A, y : A tack P : B$,
-    $Gamma, z : A tack P[x, y <- z]: B$,
-  ))
+## Advanced usage
 
-  #let exchange = prooftree(rule(
-    label: [Exchange],
-    $Gamma, x : A, y: B, Delta tack P : B$,
-    $Gamma, y : B, x: A, Delta tack P : B$,
-  ))
+The `prooftree` function accepts multiple named arguments that let you customize the tree:
 
-  #align(center, rule-set(
-    variable,
-    abstraction,
-    application,
-    weakening,
-    contraction,
-    exchange
+<dl>
+  <dt><code>min-premise-spacing</code></dt>
+  <dd>The minimum amount of space between two premises.</dd>
+
+  <dt><code>title-inset</code></dt>
+  <dd>The amount to extend the horizontal bar beyond the content. Also determines how far from the bar labels and names are displayed.</dd>
+
+  <dt><code>stroke</code></dt>
+  <dd>The stroke to use for the horizontal bars.</dd>
+
+  <dt><code>vertical-spacing</code></dt>
+  <dd>The space between the bottom of the bar and the conclusion, and between the top of the bar and the premises.</dd>
+
+  <dt><code>min-bar-height</code></dt>
+  <dd>The minimum height of the box containing the horizontal bar.</dd>
+
+  <dt><code>dir</code></dt>
+  <dd>The orientation of the proof tree (either <code>btt</code> or <code>ttb</code>, <code>btt</code> being the default).</dd>
+</dl>
+
+For more information, please refer to the documentation in [`curryst.typ`](curryst.typ).
+
+## Layout Multiple Rules (a simple way)
+
+Here we show a way to typeset multiple rules at one time :
+
+![8 rules rendered together.](examples/ruleset.svg)
+<details>
+  <summary>Show code</summary>
+
+  ```typ
+  #let tree = prooftree(rule(
+    label: [Label],
+    name: [Rule name],
+    [Conclusion],
+    [Premise 1],
+    [Premise 2],
+    [Premise 3],
   ))
+  #let ax = prooftree(rule(
+    label: [Axiome],
+    $Gamma tack A or not A$,
+  ))
+  #let rule-set(..rules, spacing: 3em) = {
+    block(rules.pos().map(box).join(h(spacing, weak: true)))
+  }
+  #align(center, rule-set(tree, ax, tree, tree, ax, ax, ax, ax))
   ```
 </details>
 
 
 This function is not available in the package because they are a lot more ways to typeset multiple rules.
-
