@@ -400,3 +400,15 @@
   ),
   [This is a wide conclusion, but not the widest],
 )
+
+#test(
+  width: 5cm,
+  config: (
+    min-premise-spacing: 1cm,
+    vertical-premise-spacing: 2em,
+  ),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  rect(width: 1cm),
+  [The conclusion],
+)
