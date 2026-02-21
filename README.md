@@ -13,7 +13,7 @@ You can import the latest version of this package with:
 
 ## Basic usage
 
-To display a proof tree, you first need to create a tree, using the `rule` function. Its first argument is the conclusion, and the other positional arguments are the premises. It also accepts a `name` for the rule name, displayed on the right of the bar, as well as a `label`, displayed on the left of the bar.
+To display a proof tree, you first need to create a tree, using the `rule` function. Its last argument is the conclusion, and the other positional arguments are the premises. It also accepts a `name` for the rule name, displayed on the right of the bar, as well as a `label`, displayed on the left of the bar.
 
 ```typ
 #let tree = rule(
