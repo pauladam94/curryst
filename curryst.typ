@@ -504,3 +504,98 @@
   block(rules.pos().map(box).join(h(column-gutter, weak: true)))
 }
 
+/// Lays out a proof tree from a Typst-native list structure.
+#let prooflist(
+  /// The list to transform into a tree structure.
+  ///
+  /// A proof list is a list consisting of three node types: `+`, `-`, and `/`.
+  /// The `+ premise` node is a terminal rule. It returns its content directly as a (single) premise.
+  ///   Any sublists are interpreted as lists directly, not proof lists.
+  /// The `- conclusion` node is a non-terminal rule. Any sublists are interpreted as premises.
+  /// The `/ name: conclusion` node is a _named_ non-terminal rule. Any sublists are premises.
+  content,
+  /// The minimum amount of space between two premises.
+  min-premise-spacing: 1.5em,
+  /// The spacing between the premise lines
+  vertical-premise-spacing: 0.7em,
+  /// The amount to extend the horizontal bar beyond the content. Also
+  /// determines how far from the bar labels and names are displayed.
+  title-inset: 0.2em,
+  /// The stroke to use for the horizontal bars.
+  stroke: stroke(0.05em),
+  /// The space between the bottom of the bar and the conclusion, and between
+  /// the top of the bar and the premises.
+  ///
+  /// Note that, in this case, "the bar" refers to the bounding box of the
+  /// horizontal line and the rule name (if any).
+  vertical-spacing: 0pt,
+  /// The minimum height of the box containing the horizontal bar.
+  ///
+  /// The height of this box is normally determined by the height of the rule
+  /// name because it is the biggest element of the box. This setting lets you
+  /// set a minimum height. The default is 0.8em, is higher than a single line
+  /// of content, meaning all parts of the tree will align properly by default,
+  /// even if some rules have no name (unless a rule is higher than a single
+  /// line).
+  min-bar-height: 0.8em,
+  /// The orientation of the proof tree.
+  ///
+  /// If set to ttb, the conclusion will be at the top, and the premises will
+  /// be at the bottom. Defaults to btt, the conclusion being at the bottom
+  /// and the premises at the top.
+  dir: btt,
+) = {
+  let filter-item(item) = item.func() in (std.list.item, std.enum.item, std.terms.item)
+
+  let roots = content.children.filter(filter-item)
+  assert(roots.len() == 1, message: "exactly one root node must be provided")
+
+  let build-prooflist(item) = {
+    if item.func() == std.enum.item {
+      return item.body
+    }
+    if item.func() == std.list.item {
+      let premises = ()
+      let conclusion = none
+      if item.body.has("children") {
+        // Typst does a lot of auto-conversion in its AST: it is not very regular. :c
+        // One such irregularity is that multiple children means the first is the list item body.
+        // No children means that the *whole* expression is the list item.
+        if item.body.children.len() > 1 {
+          conclusion = item.body.children.first()
+          premises = item.body.children.slice(1).filter(filter-item)
+        }
+      } else {
+        conclusion = item.body
+      }
+      return rule(label: none, name: none, ..premises.map(build-prooflist), conclusion)
+    }
+    if item.func() == std.terms.item {
+      // The syntax of term lists is a little restrictive.
+      // We can't provide a "label" (LHS), unfortunately, only a name (RHS).
+      let premises = ()
+      let conclusion = none
+      if item.description.has("children") {
+        // Another such irregularity is that multiple children means that the first is the term description.
+        // No children means the *whole* expression is the term description.
+        if item.description.children.len() > 1 {
+          conclusion = item.description.children.first()
+          premises = item.description.children.slice(1).filter(filter-item)
+        }
+      } else {
+        conclusion = item.description
+      }
+      return rule(label: none, name: item.term, ..premises.map(build-prooflist), conclusion)
+    }
+  }
+  prooftree(
+    min-premise-spacing: min-premise-spacing, 
+    vertical-premise-spacing: vertical-premise-spacing, 
+    title-inset: title-inset, 
+    stroke: stroke, 
+    vertical-spacing: vertical-spacing, 
+    min-bar-height: min-bar-height, 
+    dir: dir, 
+    build-prooflist(roots.first())
+  )
+}
