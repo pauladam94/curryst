@@ -207,9 +207,11 @@ Here we show a way to typeset multiple rules at one time :
 The function `rule-set` is very simple and is implemented this way :
 
 ```typ
-#let rule-set(column-gutter: 3em, row-gutter: 2em, ..rules) = {
-  set par(leading: row-gutter)
-  block(rules.pos().map(box).join(h(column-gutter, weak: true)))
+#let rule-set(column-gutter: 3em, row-gutter: 3em, ..rules) = {
+  set par(leading: row-gutter, spacing: row-gutter)
+  for rules in rules.pos().split(linebreak()) {
+    block(rules.map(box).join(h(column-gutter, weak: true)))
+  }
 }
 ```
 

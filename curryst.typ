@@ -500,7 +500,9 @@
   row-gutter: 2em,
   ..rules
 ) = {
-  set par(leading: row-gutter)
-  block(rules.pos().map(box).join(h(column-gutter, weak: true)))
+  set par(leading: row-gutter, spacing: row-gutter)
+  for rules in rules.pos().split(linebreak()) {
+    block(rules.map(box).join(h(column-gutter, weak: true)))
+  }
 }
 
