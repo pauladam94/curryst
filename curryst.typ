@@ -176,6 +176,10 @@
 
     let lines = ((),)
     for premise in premises {
+      if premise == linebreak() {
+        lines.push(())
+        continue
+      }
       let augmented-line = lines.last() + (premise,)
       if measure(line-builder(..augmented-line)).width <= available-width {
         lines.last() = augmented-line

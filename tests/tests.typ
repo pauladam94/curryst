@@ -1,5 +1,7 @@
 #import "../curryst.typ": prooftree, rule
 #set document(date: none)
+// #set page(maring: 0.5cm)
+// makes the last 2 tests work ??
 #set page(margin: 0.5cm, width: auto, height: auto)
 
 #let test(width: auto, config: (:), ..args) = {
@@ -412,3 +414,37 @@
   rect(width: 1cm),
   [The conclusion],
 )
+
+#test(
+  lorem(5),
+  lorem(2),
+  linebreak(),
+  lorem(3),
+  lorem(2),
+  lorem(3),
+  [Conclusion a bit long],
+)
+
+#test(
+  lorem(2),
+  lorem(2),
+  linebreak(),
+  lorem(3),
+  linebreak(),
+  lorem(2),
+  lorem(3),
+  [Conclusion Conclusion],
+)
+
+#prooftree(rule(
+  lorem(2),
+  lorem(2),
+  linebreak(),
+  lorem(3),
+  linebreak(),
+  lorem(2),
+  lorem(3),
+  [Conclusion Conclusion],
+))
+
+
