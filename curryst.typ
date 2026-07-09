@@ -525,7 +525,8 @@
   /// The length of the top line of the trapezoid : it's the only length not determined by [inset], thus it's a separate parameter. Can be absolute or relative length.
   top_length: 150% + 0pt,
   /// The stroke of the trapezoid
-  stroke: none) = {
+  stroke: none
+) = {
   let make_content(
     bar-stroke,
     min-bar-height,
