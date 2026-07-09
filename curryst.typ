@@ -518,13 +518,16 @@
 }
 
 #let moreproof(
-  /// What to put inside the premise
+  /// What to put inside the premise.
   body,
-  /// The inset of the premise inside the small rectangle in the trapezoid
-  inset: (top:.1em, bottom:0em, left:0em, right:0em),
-  /// The length of the top line of the trapezoid : it's the only length not determined by [inset], thus it's a separate parameter. Can be absolute or relative length.
+  /// The inset of the premise inside the small rectangle in the trapezoid.
+  inset: (top: 0.1em, bottom: 0em, left: 0em, right: 0em),
+  /// The length of the top line of the trapezoid 
+  /// 
+  /// This is the only length not determined by `inset`, and therefore a separate 
+  /// parameter. Can be absolute, relative length or ratio.
   top-length: 150% + 0pt,
-  /// The stroke of the trapezoid
+  /// The stroke of the trapezoid.
   stroke: none
 ) = {
   let make-content(
