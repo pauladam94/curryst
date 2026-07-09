@@ -413,7 +413,7 @@
     }
 
     if rule.at("kind", default: none) == "moreproof" {
-      return (rule.make_content)(
+      return (rule.make-content)(
         bar-stroke,
         min-bar-height,
       )
@@ -523,65 +523,64 @@
   /// The inset of the premise inside the small rectangle in the trapezoid
   inset: (top:.1em, bottom:0em, left:0em, right:0em),
   /// The length of the top line of the trapezoid : it's the only length not determined by [inset], thus it's a separate parameter. Can be absolute or relative length.
-  top_length: 150% + 0pt,
+  top-length: 150% + 0pt,
   /// The stroke of the trapezoid
   stroke: none
 ) = {
-  let make_content(
+  let make-content(
     bar-stroke,
     min-bar-height,
   ) = {
-    let moreproof_stroke = if stroke == none {
+    let moreproof-stroke = if stroke == none {
       bar-stroke
     } else {
       stroke
     }
-    let floating_line(..args) = place(line(..args))
 
-    let height_body = measure(body).height
-    let width_body = measure(body).width
-    let top_inset = inset.at("top", default:.1em)
-    let bottom_inset = inset.at("bottom", default:0em)
-    let left_inset = inset.at("left", default:0em)
-    let right_inset = inset.at("right", default:0em)
-    let vertical_delta = min-bar-height / 2
-    let width_small_rectange = left_inset + width_body + right_inset
-    let top_length_ratio = if type(top_length) == relative {
-      top_length.ratio
-    } else if type(top_length) == ratio {
-      top_length
+    let height-body = measure(body).height
+    let width-body = measure(body).width
+    let top-inset = inset.at("top", default:.1em)
+    let bottom-inset = inset.at("bottom", default:0em)
+    let left-inset = inset.at("left", default:0em)
+    let right-inset = inset.at("right", default:0em)
+    let vertical-delta = min-bar-height / 2
+    let width-small-rectange = left-inset + width-body + right-inset
+    let top-length-ratio = if type(top-length) == relative {
+      top-length.ratio
+    } else if type(top-length) == ratio {
+      top-length
     } else {
       none
     }
-    let top_length_absolute = if type(top_length) == relative {
-      top_length.length
-    } else if type(top_length) == length {
-      top_length
+    let top-length-absolute = if type(top-length) == relative {
+      top-length.length
+    } else if type(top-length) == length {
+      top-length
     } else {
       none
     }
-    let side_outer_space = (width_small_rectange * top_length_ratio + top_length_absolute)/2
+    let side-outer-space = (width-small-rectange * top-length-ratio + top-length-absolute)/2
 
-    let bottom_left_coord = (0% - left_inset, 0% + height_body + vertical_delta + top_inset + bottom_inset)
-    let bottom_right_coord = (0% + width_body + right_inset, height_body + vertical_delta + top_inset + bottom_inset)
-    let top_left_coord = (0% - side_outer_space, 0%)
-    let top_right_coord = (0% + width_body + side_outer_space, 0%)
+    let bottom-left-coord = (0% - left-inset, 0% + height-body + vertical-delta + top-inset + bottom-inset)
+    let bottom-right-coord = (0% + width-body + right-inset, height-body + vertical-delta + top-inset + bottom-inset)
+    let top-left-coord = (0% - side-outer-space, 0%)
+    let top-right-coord = (0% + width-body + side-outer-space, 0%)
 
-    let left_trapezoid_extra_size = top_right_coord.at(0) - top_left_coord.at(0) - width_body
-    let right_trapezoid_extra_size = 1em
+    let left-trapezoid-extra-size = top-right-coord.at(0) - top-left-coord.at(0) - width-body
+    let right-trapezoid-extra-size = 1em
 
     let content = block(
       // stroke:.5pt + orange, // DEBUG
-      inset:(left: side_outer_space, right: side_outer_space)
+      inset:(left: side-outer-space, right: side-outer-space)
     )[
       #set align(top)
       #context {
         place(curve(
-          stroke: moreproof_stroke,
-          curve.move(bottom_left_coord),
-          curve.line(top_left_coord),
-          curve.line(top_right_coord),
-          curve.line(bottom_right_coord),
+          stroke: moreproof-stroke,
+          curve.move(bottom-left-coord),
+          curve.line(top-left-coord),
+          curve.line(top-right-coord),
+          curve.line(bottom-right-coord),
         ))
       }
       #block(
@@ -590,10 +589,10 @@
         inset:inset,
       )
     ]
-    let dimensions_without_trapezoid = measure(content)
+    let dimensions-without-trapezoid = measure(content)
     let dimensions = (
-      width: dimensions_without_trapezoid.width,
-      height: dimensions_without_trapezoid.height,
+      width: dimensions-without-trapezoid.width,
+      height: dimensions-without-trapezoid.height,
     )
     (
       content: box(
@@ -605,7 +604,7 @@
       right-blank: 0pt,
     )
   }
-  let res = (kind:"moreproof", make_content:make_content)
+  let res = (kind:"moreproof", make-content:make-content)
   assert(res.at("kind", default:none) == "moreproof") // Debug
   return res
 }
