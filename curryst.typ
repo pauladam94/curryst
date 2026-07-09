@@ -93,7 +93,7 @@
   let layout-premises(
     /// Each laid out premise.
     ///
-    /// Must be an array of ditionaries with `content`, `left-blank` and
+    /// Must be an array of dictionaries with `content`, `left-blank` and
     /// `right-blank` attributes.
     premises,
     /// The minimum amount between each premise.
@@ -412,6 +412,13 @@
       return layout-content(rule)
     }
 
+    if rule.at("kind", default: none) == "moreproof" {
+      return (rule.make_content)(
+        bar-stroke,
+        min-bar-height,
+      )
+    }
+
     let layout-with-baked-premises(premises) = {
       layout-rule(
         premises,
@@ -510,3 +517,94 @@
   }
 }
 
+#let moreproof(
+  /// What to put inside the premise
+  body,
+  /// The inset of the premise inside the small rectangle in the trapezoid
+  inset: (top:.1em, bottom:0em, left:0em, right:0em),
+  /// The length of the top line of the trapezoid : it's the only length not determined by [inset], thus it's a separate parameter. Can be absolute or relative length.
+  top_length: 150% + 0pt,
+  /// The stroke of the trapezoid
+  stroke: none) = {
+  let make_content(
+    bar-stroke,
+    min-bar-height,
+  ) = {
+    let moreproof_stroke = if stroke == none {
+      bar-stroke
+    } else {
+      stroke
+    }
+    let floating_line(..args) = place(line(..args))
+
+    let height_body = measure(body).height
+    let width_body = measure(body).width
+    let top_inset = inset.at("top", default:.1em)
+    let bottom_inset = inset.at("bottom", default:0em)
+    let left_inset = inset.at("left", default:0em)
+    let right_inset = inset.at("right", default:0em)
+    let vertical_delta = min-bar-height / 2
+    let width_small_rectange = left_inset + width_body + right_inset
+    let top_length_ratio = if type(top_length) == relative {
+      top_length.ratio
+    } else if type(top_length) == ratio {
+      top_length
+    } else {
+      none
+    }
+    let top_length_absolute = if type(top_length) == relative {
+      top_length.length
+    } else if type(top_length) == length {
+      top_length
+    } else {
+      none
+    }
+    let side_outer_space = (width_small_rectange * top_length_ratio + top_length_absolute)/2
+
+    let bottom_left_coord = (0% - left_inset, 0% + height_body + vertical_delta + top_inset + bottom_inset)
+    let bottom_right_coord = (0% + width_body + right_inset, height_body + vertical_delta + top_inset + bottom_inset)
+    let top_left_coord = (0% - side_outer_space, 0%)
+    let top_right_coord = (0% + width_body + side_outer_space, 0%)
+
+    let left_trapezoid_extra_size = top_right_coord.at(0) - top_left_coord.at(0) - width_body
+    let right_trapezoid_extra_size = 1em
+
+    let content = block(
+      // stroke:.5pt + orange, // DEBUG
+      inset:(left: side_outer_space, right: side_outer_space)
+    )[
+      #set align(top)
+      #context {
+        place(curve(
+          stroke: moreproof_stroke,
+          curve.move(bottom_left_coord),
+          curve.line(top_left_coord),
+          curve.line(top_right_coord),
+          curve.line(bottom_right_coord),
+        ))
+      }
+      #block(
+        // stroke:yellow + .5pt, // DEBUG
+        body,
+        inset:inset,
+      )
+    ]
+    let dimensions_without_trapezoid = measure(content)
+    let dimensions = (
+      width: dimensions_without_trapezoid.width,
+      height: dimensions_without_trapezoid.height,
+    )
+    (
+      content: box(
+        // stroke: yellow + 0.3pt, // DEBUG
+        ..dimensions,
+        content,
+      ),
+      left-blank: 0pt,
+      right-blank: 0pt,
+    )
+  }
+  let res = (kind:"moreproof", make_content:make_content)
+  assert(res.at("kind", default:none) == "moreproof") // Debug
+  return res
+}
