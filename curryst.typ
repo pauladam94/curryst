@@ -528,7 +528,7 @@
   /// parameter. Can be absolute, relative length or ratio.
   top-length: 150% + 0pt,
   /// The stroke of the trapezoid.
-  stroke: none
+  stroke: none,
 ) = {
   let make-content(
     bar-stroke,
