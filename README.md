@@ -170,7 +170,7 @@ Here we show a way to typeset multiple rules at one time :
   #let application = prooftree(rule(
     name: [Application],
     $Gamma tack P : A => B$,
-    $Delta tack Q : B$,
+    $Delta tack Q : A$,
     $Gamma, Delta tack P Q : B$,
   ))
 
