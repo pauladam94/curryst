@@ -1,4 +1,4 @@
-#import "../curryst.typ": prooftree, rule
+#import "../curryst.typ": prooftree, rule, moreproof
 #set document(date: none)
 // #set page(maring: 0.5cm)
 // makes the last 2 tests work ??
@@ -447,4 +447,15 @@
   [Conclusion Conclusion],
 ))
 
+#test(
+  moreproof($Pi_0$),
+  moreproof($Pi_1$, inset:(top:20pt, bottom: 10pt)),
+  $x$
+)
+
+#test(
+  moreproof($Pi_000$),
+  moreproof($Pi_111$),
+  $x$
+)
 
