@@ -147,7 +147,6 @@
     )
   }
 
-
   /// Lays out multiple leaf premises, onto multiple lines to respect the
   /// available horizontal space.
   ///
@@ -176,6 +175,7 @@
 
     let lines = ((),)
     for premise in premises {
+      // Taking into account the linebreak
       if premise == linebreak() {
         lines.push(())
         continue
@@ -199,7 +199,6 @@
       )
     })
   }
-
 
   /// Lays out the horizontal bar of a rule.
   let layout-bar(
@@ -274,7 +273,6 @@
     )
   }
 
-
   /// Lays out the application of a rule.
   let layout-rule(
     /// The laid out premises.
@@ -309,7 +307,9 @@
     conclusion = box(conclusion, ..measure(conclusion))
 
     let premises-inner-width = (
-      measure(premises.content).width - premises.left-blank - premises.right-blank
+      measure(premises.content).width
+        - premises.left-blank
+        - premises.right-blank
     )
     let conclusion-width = measure(conclusion).width
 
@@ -348,7 +348,9 @@
       left-start = calc.max(premises-left-hang, bar.left-blank)
       right-start = calc.max(premises-right-hang, bar.right-blank)
       premises-left-offset = (
-        left-start + (bar-length - premises-inner-width) / 2 - premises.left-blank
+        left-start
+          + (bar-length - premises-inner-width) / 2
+          - premises.left-blank
       )
       conclusion-left-offset = left-start
     }
@@ -373,11 +375,18 @@
 
     (
       content: box(content),
+      // Here a "fix" that offset the prooftree
+      // when the conclusion is at the bottom.
+      // However a different behavior is needed
+      // when the direction is ttb (conclusion at the top).
+      // baseline: (
+      //   at: bottom,
+      //   shift: conclusion.height + vertical-spacing,
+      // ), // baseline can be an argument of the box function.
       left-blank: left-start + (bar-length - conclusion-width) / 2,
       right-blank: right-start + (bar-length - conclusion-width) / 2,
     )
   }
-
 
   /// Lays out an entire proof tree.
   ///
@@ -408,10 +417,14 @@
     /// The minimum height of the bar element.
     min-bar-height,
   ) = {
+    // First case.
+    // We don't typeset a rule but just a content-like data.
+
     if type(rule) != dictionary {
       return layout-content(rule)
     }
 
+    // Layout of premises with the conclusion.
     let layout-with-baked-premises(premises) = {
       layout-rule(
         premises,
@@ -425,6 +438,10 @@
         min-bar-height,
       )
     }
+
+    // Second case.
+    // We try to typeset all premises on the same line.
+    // If it does not fit with will go to the third case.
 
     let side-to-side-premises = layout-premises(
       rule.premises.map(premise => layout-tree(
@@ -446,14 +463,27 @@
     let premises-are-all-leaves = rule.premises.all(premise => (
       type(premise) != dictionary
     ))
+
+    // We go to the third case if there is not enough place to typeset
+    // all the leafs horizontally or if there are not all leaves.
     if (
-      available-width == none or measure(result.content).width <= available-width or not premises-are-all-leaves
+      (
+        available-width == none
+          // If the layout does not fit within one line.
+          or measure(result.content).width <= available-width
+          // If
+          or not premises-are-all-leaves
+      )
+        // If the user ask explicitely for a linebreak.
+        and not (linebreak() in rule.premises)
     ) {
       return result
     }
 
+    // Third case.
     // If the premises are all leaves, they can be typeset in multiple lines
     // when there is not enough horizontal space.
+
     let used-width = bar-hang * 2
     if rule.name != none {
       used-width += bar-margin + measure(rule.name).width
@@ -469,7 +499,6 @@
     )
     layout-with-baked-premises(stacked-premises)
   }
-
 
   layout(available => {
     let tree = layout-tree(
@@ -491,10 +520,19 @@
       tree,
     )
   })
+
+  context {
+    // If compiling to HTML, output an embedded SVG.
+    if "html" in dictionary(std) and target() == "html" {
+      html.frame(content)
+    } else {
+      content
+    }
+  }
 }
 
 /// Very Simple function to typeset a set of rules.
-/// 
+///
 /// This function is basic and actually typeset a set of any content in a flex
 /// way that spans multiple lines.
 #let rule-set(
@@ -502,7 +540,7 @@
   column-gutter: 3em,
   /// Vertical spacing between consecutives lines of rules.
   row-gutter: 2em,
-  ..rules
+  ..rules,
 ) = {
   set par(leading: row-gutter, spacing: row-gutter)
   for rules in rules.pos().split(linebreak()) {
