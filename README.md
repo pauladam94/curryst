@@ -8,7 +8,7 @@ A Typst package for typesetting proof trees.
 You can import the latest version of this package with:
 
 ```typst
-#import "@preview/curryst:0.6.0": rule, prooftree, rule-set
+#import "@preview/curryst:0.6.0": *
 ```
 
 ## Basic usage
@@ -79,52 +79,44 @@ You can specify a rule as the premises of a rule in order to create a tree:
 
 ![The rendered tree.](examples/rule-as-premise.svg)
 
-As an example, here is a natural deduction proof tree generated with Curryst:
+However, directly composing calls to `rule` can get verbose. To alleviate this, the `prooflist` function is provided, which uses Typst's native lists as a compact DSL for a proof tree. A `/ label: conclusion` element corresponds with a labelled rule, a `- conclusion` element corresponds with an unlabelled rule, and a `+ premise` element corresponds with an unlabelled terminal rule. 
+
+```typ
+#prooflist[
+  / $R$: $C_1 or C_2 or C_3$
+    / $A$: $C_1 or C_2 or L$
+      - $C_1 or L$
+        + $Pi_1$
+    - $C_2 or overline(L)$
+      + $Pi_2$
+]
+```
+
+`curryst` is usable for highly complex derivations. As an example, here is a natural deduction proof tree:
 
 ![The rendered tree.](examples/natural-deduction.svg)
 
-<details>
-  <summary>Show code</summary>
+```typ
+#let ax(it) = prooftree(rule(name: "ax", it))
+#let ax-1 = ax($Gamma tack p -> q$)
+#let ax-2 = ax($Gamma tack p and not q$)
 
-  ```typ
-  #let ax = rule.with(name: [ax])
-  #let and-el = rule.with(name: $and_e^ell$)
-  #let and-er = rule.with(name: $and_e^r$)
-  #let impl-i = rule.with(name: $scripts(->)_i$)
-  #let impl-e = rule.with(name: $scripts(->)_e$)
-  #let not-i = rule.with(name: $not_i$)
-  #let not-e = rule.with(name: $not_e$)
-
-  #prooftree(
-    impl-i(
-      not-i(
-        not-e(
-          impl-e(
-            ax($Gamma tack p -> q$),
-            and-el(
-              ax($Gamma tack p and not q$),
-              $Gamma tack p$,
-            ),
-            $Gamma tack q$,
-          ),
-          and-er(
-            ax($Gamma tack p and not q$),
-            $Gamma tack not q$,
-          ),
-          $ underbrace(p -> q\, p and not q, Gamma) tack bot $,
-        ),
-        $p -> q tack  not (p and not q)$,
-      ),
-      $tack (p -> q) -> not (p and not q)$,
-    )
-  )
-  ```
-</details>
-
+#prooflist[
+  / $scripts(->)_i$: $tack (p -> q) -> not (p and not q)$
+    / $not_i$: $p -> q tack  not (p and not q)$
+      / $not_e$: $ underbrace(p -> q\, p and not q, Gamma) tack bot $
+        / $scripts(->)_e$: $Gamma tack q$
+          #ax-1
+          / $and_e^ell$: $Gamma tack p$
+            #ax-2
+        / $and_e^r$: $Gamma tack not q$
+          #ax-2
+]
+```
 
 ## Advanced usage
 
-The `prooftree` function accepts multiple named arguments that let you customize the tree:
+The `prooftree` and `prooflist` functions accept multiple named arguments that let you customize the tree:
 
 <dl>
   <dt><code>min-premise-spacing</code></dt>
@@ -144,6 +136,19 @@ The `prooftree` function accepts multiple named arguments that let you customize
 
   <dt><code>dir</code></dt>
   <dd>The orientation of the proof tree (either <code>btt</code> or <code>ttb</code>, <code>btt</code> being the default).</dd>
+</dl>
+
+The `prooflist` function takes the following additional arguments:
+
+<dl>
+  <dt><code>label-dir</code></dt>
+  <dd>The side of an inference rule any labels should appear on (either <code>right</code> or <code>left</code>, <code>right</code> being the default).</dd>
+
+  <dt><code>label-lhs</code></dt>
+  <dd>The label to appear on the left-hand side of a (labelled) inference rule when unspecified.</dd>
+
+  <dt><code>label-rhs</code></dt>
+  <dd>The label to appear on the right-hand side of a (labelled) inference rule when unspecified.</dd>
 </dl>
 
 For more information, please refer to the documentation in [`curryst.typ`](curryst.typ).
