@@ -164,14 +164,14 @@ Here we show a way to typeset multiple rules at one time :
   #let abstraction = prooftree(rule(
     name: [Abstraction],
     $Gamma, x: A tack P : B$,
-    $Gamma tack lambda x . P : A => B$,
+    $Gamma tack lambda x . med P : A => B$,
   ))
 
   #let application = prooftree(rule(
     name: [Application],
     $Gamma tack P : A => B$,
     $Delta tack Q : A$,
-    $Gamma, Delta tack P Q : B$,
+    $Gamma, Delta tack P med Q : B$,
   ))
 
   #let weakening = prooftree(rule(
@@ -194,15 +194,18 @@ Here we show a way to typeset multiple rules at one time :
 
   #align(center, rule-set(
     variable,
-    abstraction,
-    application,
     weakening,
     contraction,
-    exchange
+    exchange,
+    linebreak(),
+    abstraction,
+    application,
   ))
   ```
 </details>
 
+Line breaks will be inserted as needed, and each line will be spaced evenly,
+but you can also force an explicit line break with `linebreak()`.
 
 The function `rule-set` is very simple and is implemented this way :
 

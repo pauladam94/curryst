@@ -9,14 +9,14 @@
 #let abstraction = prooftree(rule(
   name: [Abstraction],
   $Gamma, x: A tack P : B$,
-  $Gamma tack lambda x . P : A => B$,
+  $Gamma tack lambda x . med P : A => B$,
 ))
 
 #let application = prooftree(rule(
   name: [Application],
   $Gamma tack P : A => B$,
   $Delta tack Q : B$,
-  $Gamma, Delta tack P Q : B$,
+  $Gamma, Delta tack P med Q : B$,
 ))
 
 #let weakening = prooftree(rule(
@@ -39,9 +39,10 @@
 
 #align(center, rule-set(
   variable,
-  abstraction,
-  application,
   weakening,
   contraction,
-  exchange
+  exchange,
+  linebreak(),
+  abstraction,
+  application,
 ))
